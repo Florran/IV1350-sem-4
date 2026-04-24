@@ -1,12 +1,13 @@
 package se.kth.iv1350.electricBike.controller;
 
-import java.lang.String;
+import java.util.ArrayList;
+import java.util.List;
 import se.kth.iv1350.electricBike.integration.*;
 import se.kth.iv1350.electricBike.model.RepairOrder;
-import java.util.List;
-import java.util.ArrayList;
 
-
+/**
+ * Coordinates calls between the view, model, and integration layers.
+ */
 public class Controller {
 
     private CustomerRegistry customerReg;
@@ -15,7 +16,7 @@ public class Controller {
     /**
      * The controller constructor
      * @param customerReg CustomerRegistry reference so controller can make calls to CustomerRegistry
-     * @param repairOrderReg RepairOrderRegistry reference to save repair orders
+     * @param repairOrderReg RepairOrderRegistry reference used to store repair orders
      */
     public Controller(CustomerRegistry customerReg, RepairOrderRegistry repairOrderReg) {
         this.customerReg = customerReg;
@@ -25,7 +26,7 @@ public class Controller {
     /**
      * Tries to find a customer based on a specified phone number
      * @param phoneNumber The phone number used to search for the customer
-     * @return Returns the found customer
+     * @return Returns the found customer, or null if no matching customer exists
      */
     public CustomerDTO findCustomer(String phoneNumber) {
         CustomerDTO foundCustomer = customerReg.findCustomer(phoneNumber);
@@ -33,36 +34,22 @@ public class Controller {
     }
 
     /**
-     * Creates a new repair order and saves it to the system.
+     * Creates a new repair order and registers it in the system.
      * @param problemDescr  The description of the problem
      * @param customerPhone The customer's phone number
      * @param bikeSerialNo  The serial number of the bike
      */
     public void createRepairOrder(String problemDescr, String customerPhone, String bikeSerialNo) {
         RepairOrder newOrder = new RepairOrder(problemDescr, customerPhone, bikeSerialNo);
-        repairOrderReg.saveRepairOrder(newOrder);
+        repairOrderReg.createRepairOrder(newOrder);
     }
 
     /**
-     * Tries to find a repair order based on its unique ID.
-     * @param orderId The unique ID of the order
-     * @return The found RepairOrderDTO, or null if not found
+     * Finds all repair orders in the system.
+     * @return A list of DTOs representing all repair orders.
      */
-    public RepairOrderDTO findRepairOrderById(String orderId) {
-        RepairOrder order = repairOrderReg.findRepairOrderById(orderId);
-        if (order != null) {
-            return order.createDTO();
-        }
-        return null;
-    }
-
-    /**
-     * Finds the history of orders for a specific customer.
-     * @param phoneNumber The phone number to search for
-     * @return A list of RepairOrderDTOs belonging to the customer
-     */
-    public List<RepairOrderDTO> findRepairOrderHistory(String phoneNumber) {
-        List<RepairOrder> orders = repairOrderReg.findRepairOrdersByPhone(phoneNumber);
+    public List<RepairOrderDTO> findAllRepairOrders() {
+        List<RepairOrder> orders = repairOrderReg.findAllRepairOrders();
         List<RepairOrderDTO> dtos = new ArrayList<>();
 
         for(RepairOrder order : orders) {
