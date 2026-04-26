@@ -19,19 +19,10 @@ public class View {
     }
 
     /**
-     * Tries to find a customer based on a specified phone number
-     * @param phoneNumber The phone number used to search for the customer
-     * @return Returns the found customer
-     */
-    public CustomerDTO findCustomer(String phoneNumber) {
-        return contr.findCustomer(phoneNumber);
-    }
-
-    /**
      * Runs a hardcoded execution of the basic repair order flow.
      */
     public void fakeExecution() {
-        CustomerDTO foundCustomer = this.findCustomer("0705556767");
+        CustomerDTO foundCustomer = contr.findCustomer("0705556767");
         System.out.print(foundCustomer);
 
         String bikeSerial = foundCustomer.getBikeSerialNo();

@@ -1,34 +1,29 @@
-package se.kth.iv1350.electricBike.controller;
+package se.kth.iv1350.electricBike.integration;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import se.kth.iv1350.electricBike.integration.CustomerDTO;
-import se.kth.iv1350.electricBike.integration.CustomerRegistry;
-import se.kth.iv1350.electricBike.integration.RepairOrderRegistry;
 
-import static org.junit.jupiter.api.Assertions.*;
+public class CustomerRegistryTest {
 
-public class ControllerTest {
-    private Controller contr;
+    private CustomerRegistry customerReg;
 
     @BeforeEach
     public void setUp() {
-        CustomerRegistry customerReg = new CustomerRegistry();
-        RepairOrderRegistry repairReg = new RepairOrderRegistry();
-
-        this.contr = new Controller(customerReg, repairReg);
+        this.customerReg = new CustomerRegistry();
     }
 
     @AfterEach
     public void tearDown() {
-        this.contr = null;
+        this.customerReg = null;
     }
 
     @Test
     public void testFindExistingCustomer() {
         String phone = "0705556767";
-        CustomerDTO result = this.contr.findCustomer(phone);
+        CustomerDTO result = this.customerReg.findCustomer(phone);
         assertNotNull(result, "Existing customer was not found");
         assertEquals(phone, result.getPhoneNumber(), "Wrong phone number");
         assertEquals("Customer1", result.getName(), "Wrong name.");
@@ -37,7 +32,7 @@ public class ControllerTest {
     @Test
     public void testFindUnknownCustomerReturnsNull() {
         String phone = "0700000000";
-        CustomerDTO result = this.contr.findCustomer(phone);
+        CustomerDTO result = this.customerReg.findCustomer(phone);
 
         assertNull(result, "invalid phone number should return null");
 
@@ -46,9 +41,8 @@ public class ControllerTest {
     @Test
     public void testFindCustomerEmptyPhoneNrReturnsNull() {
         String phone = "";
-        CustomerDTO result = this.contr.findCustomer(phone);
+        CustomerDTO result = this.customerReg.findCustomer(phone);
 
         assertNull(result, "no phone number should return null");
     }
-
 }
