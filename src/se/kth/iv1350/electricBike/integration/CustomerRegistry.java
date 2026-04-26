@@ -1,13 +1,14 @@
 package se.kth.iv1350.electricBike.integration;
 
-import java.lang.String;
-
+/**
+ * Represents the integration layer storage for customer information.
+ */
 public class CustomerRegistry {
 
     /**
      * Tries to find a customer based on a specified phone number, this would go in and ask a DB or equal but that is scoped out for the assignment. For now the values are hardcoded
      * @param phoneNumber The phone number used to search for the customer
-     * @return Returns the found customer
+     * @return Returns the found customer, or null if no matching customer exists
      */
     public CustomerDTO findCustomer(String phoneNumber) {
         if (phoneNumber.equals("0705556767")) {

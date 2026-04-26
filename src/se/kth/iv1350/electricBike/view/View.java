@@ -3,6 +3,9 @@ package se.kth.iv1350.electricBike.view;
 import se.kth.iv1350.electricBike.controller.Controller;
 import se.kth.iv1350.electricBike.integration.*;
 
+/**
+ * Represents the view layer used to run the application flow.
+ */
 public class View {
 
     private Controller contr;
@@ -22,12 +25,8 @@ public class View {
      * @param phoneNumber The phone number used to search for the customer
      * @return Returns the found customer
      */
-    public CustomerDTO findCustomer(String phoneNumber) {
-        return contr.findCustomer(phoneNumber);
-    }
-
     public void fakeExecution() {
-        CustomerDTO foundCustomer = this.findCustomer("0705556767");
+        CustomerDTO foundCustomer = contr.findCustomer("0705556767");
         System.out.print(foundCustomer);
 
         String bikeSerial = foundCustomer.getBikeSerialNo();
@@ -43,8 +42,7 @@ public class View {
         System.out.println("\nTekniker söker fram ordern via telefonnummer...");
         java.util.List<RepairOrderDTO> history = contr.findRepairOrderHistory(customerPhone);
 
-        String generatedOrderId = history.get(0).getId();
-        RepairOrderDTO foundOrder = contr.findRepairOrderById(generatedOrderId);
+        RepairOrderDTO foundOrder = repairOrders.get(0);
 
         System.out.println("Systemet visar orderdetaljer från DTO:");
         System.out.println(" - Order-ID: " + foundOrder.getId());

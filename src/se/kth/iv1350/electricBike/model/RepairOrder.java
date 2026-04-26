@@ -1,10 +1,10 @@
 package se.kth.iv1350.electricBike.model;
 
-import se.kth.iv1350.electricBike.integration.RepairOrderDTO;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import se.kth.iv1350.electricBike.integration.RepairOrderDTO;
 
 /**
  * Represents a repair order for a bike, containing customer details,

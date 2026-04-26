@@ -1,7 +1,8 @@
 package se.kth.iv1350.electricBike.integration;
 
-import java.lang.String;
-
+/**
+ * Data transfer object containing customer and bike information.
+ */
 public class CustomerDTO {
 
     private String name;
@@ -15,6 +16,7 @@ public class CustomerDTO {
      * The CustomerDTO constructor, this function populates the DTO's attributes
      * @param name The name of the customer
      * @param email The email of the customer
+     * @param phoneNumber The phone number of the customer
      * @param bikeBrand The brand of the customers bike
      * @param bikeSerialNo The serial number of the customers bike
      * @param bikeModel The model of the customers bike
