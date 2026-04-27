@@ -1,5 +1,7 @@
 package se.kth.iv1350.electricBike.model;
 
+import se.kth.iv1350.electricBike.integration.RepairTaskDTO;
+
 /**
  * Represents a single piece of work that needs to be done to fix a bike.
  */
@@ -34,5 +36,13 @@ public class RepairTask {
      */
     public boolean isComplete() {
         return this.isComplete;
+    }
+
+    /**
+     * Creates a Data Transfer Object representing this task.
+     * @return A new instance of RepairTaskDTO containing task details.
+     */
+    public RepairTaskDTO createDTO() {
+        return new RepairTaskDTO(description, isComplete);
     }
 }

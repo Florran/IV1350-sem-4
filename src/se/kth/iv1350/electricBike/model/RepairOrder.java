@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import se.kth.iv1350.electricBike.integration.RepairOrderDTO;
+import se.kth.iv1350.electricBike.integration.RepairTaskDTO;
 
 /**
  * Represents a repair order for a bike, containing customer details,
@@ -16,6 +17,7 @@ public class RepairOrder {
     private String customerPhone;
     private String bikeSerialNo;
     private LocalDateTime date;
+    private LocalDateTime estimatedCompletionDate;
     private String state;
 
     private DiagnosticReport diagnosticReport;
@@ -34,6 +36,8 @@ public class RepairOrder {
         this.customerPhone = customerPhone;
         this.bikeSerialNo = bikeSerialNo;
         this.date = LocalDateTime.now();
+        // Hardcoded estimate: one week from order creation
+        this.estimatedCompletionDate = this.date.plusWeeks(1);
         this.state = "Newly created";
 
         this.diagnosticReport = new DiagnosticReport();
@@ -82,7 +86,20 @@ public class RepairOrder {
      * @return A new instance of RepairOrderDTO containing order details.
      */
     public RepairOrderDTO createDTO() {
-        return new RepairOrderDTO(id, state, problemDescr);
+        List<RepairTaskDTO> taskDTOs = new ArrayList<>();
+        for (RepairTask task : repairTasks) {
+            taskDTOs.add(task.createDTO());
+        }
+        return new RepairOrderDTO(
+                id,
+                state,
+                problemDescr,
+                customerPhone,
+                bikeSerialNo,
+                date.toString(),
+                estimatedCompletionDate.toString(),
+                diagnosticReport.getResults(),
+                taskDTOs);
     }
 
     /**
@@ -144,5 +161,14 @@ public class RepairOrder {
      */
     public LocalDateTime getDate() {
         return date;
+    }
+
+    /**
+     * Gets the estimated completion date and time for this repair.
+     *
+     * @return The estimated completion date and time.
+     */
+    public LocalDateTime getEstimatedCompletionDate() {
+        return estimatedCompletionDate;
     }
 }

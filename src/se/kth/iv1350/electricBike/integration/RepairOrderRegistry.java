@@ -47,9 +47,22 @@ public class RepairOrderRegistry {
         return null;
     }
 
-/**
+    /**
+     * Updates a repair order in the registry, matching on its id.
+     * @param repairOrder The repair order to update.
+     */
+    public void updateRepairOrder(RepairOrder repairOrder) {
+        for (int i = 0; i < repairOrders.size(); i++) {
+            if (repairOrders.get(i).getId().equals(repairOrder.getId())) {
+                repairOrders.set(i, repairOrder);
+                return;
+            }
+        }
+    }
+
+    /**
      * Finds an active repair order belonging to a customer with the given phone number.
-     * * @param phoneNumber The customer's phone number.
+     * @param phoneNumber The customer's phone number.
      * @return The matching RepairOrder, or null if none is found.
      */
     public RepairOrder findRepairOrderByPhone(String phoneNumber) {
