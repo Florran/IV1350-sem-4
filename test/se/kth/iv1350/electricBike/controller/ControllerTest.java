@@ -16,8 +16,9 @@ public class ControllerTest {
     public void setUp() {
         CustomerRegistry customerReg = new CustomerRegistry();
         RepairOrderRegistry repairReg = new RepairOrderRegistry();
+        Printer printer = new Printer();
 
-        this.contr = new Controller(customerReg, repairReg);
+        this.contr = new Controller(customerReg, repairReg, printer);
 
         String phone = "0701112233";
         contr.createRepairOrder("Motor error", phone, "SN999");
