@@ -75,19 +75,18 @@ public class Controller {
     }
 
     /**
-     * Finds the history of orders for a specific customer.
+     * Tries to find an active repair order for a specific customer.
      *
      * @param phoneNumber The phone number to search for
-     * @return A list of RepairOrderDTOs belonging to the customer
+     * @return The found RepairOrderDTO, or null if no order was found
      */
-    public List<RepairOrderDTO> findRepairOrderHistory(String phoneNumber) {
-        List<RepairOrder> orders = repairOrderReg.findRepairOrdersByPhone(phoneNumber);
-        List<RepairOrderDTO> dtos = new ArrayList<>();
+    public RepairOrderDTO findRepairOrder(String phoneNumber) {
+        RepairOrder order = repairOrderReg.findRepairOrderByPhone(phoneNumber);
 
-        for (RepairOrder order : orders) {
-            dtos.add(order.createDTO());
+        if (order != null) {
+            return order.createDTO();
         }
-        return dtos;
+        return null;
     }
 
     /**
@@ -121,15 +120,5 @@ public class Controller {
     public void acceptRepairOrder(String repairOrderId) {
         RepairOrder repairOrder = repairOrderReg.findRepairOrderById(repairOrderId);
         repairOrder.acceptRepairOrder();
-    }
-
-    /**
-     * Marks a specific repair order as rejected by the customer.
-     *
-     * @param repairOrderId The unique identifier of the repair order.
-     */
-    public void rejectRepairOrder(String repairOrderId) {
-        RepairOrder repairOrder = repairOrderReg.findRepairOrderById(repairOrderId);
-        repairOrder.rejectRepairOrder();
     }
 }

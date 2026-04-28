@@ -5,7 +5,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import se.kth.iv1350.electricBike.integration.*;
 import se.kth.iv1350.electricBike.model.RepairOrder;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -19,12 +18,13 @@ public class ControllerTest {
         RepairOrderRegistry repairReg = new RepairOrderRegistry();
 
         this.contr = new Controller(customerReg, repairReg);
-      
+
         String phone = "0701112233";
         contr.createRepairOrder("Motor error", phone, "SN999");
 
-        List<RepairOrderDTO> history = contr.findRepairOrderHistory(phone);
-        savedOrderId = history.get(0).getId();
+        
+        RepairOrderDTO foundOrder = contr.findRepairOrder(phone);
+        savedOrderId = foundOrder.getId();
     }
 
     @AfterEach
@@ -58,7 +58,7 @@ public class ControllerTest {
 
         assertNull(result, "no phone number should return null");
     }
-  
+
     @Test
     void testAddDiagnosticResultViaController() {
         contr.addDiagnosticResult(savedOrderId, "Sensor trasig");

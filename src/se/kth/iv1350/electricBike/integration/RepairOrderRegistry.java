@@ -47,18 +47,17 @@ public class RepairOrderRegistry {
         return null;
     }
 
-    /**
-     * Finds all repair orders belonging to a customer with the given phone number.
-     * @param phoneNumber The customer's phone number.
-     * @return A list of matching repair orders (empty if none found).
+/**
+     * Finds an active repair order belonging to a customer with the given phone number.
+     * * @param phoneNumber The customer's phone number.
+     * @return The matching RepairOrder, or null if none is found.
      */
-    public List<RepairOrder> findRepairOrdersByPhone(String phoneNumber) {
-        List<RepairOrder> foundOrders = new ArrayList<>();
+    public RepairOrder findRepairOrderByPhone(String phoneNumber) {
         for (RepairOrder order : repairOrders) {
             if (order.getCustomerPhone().equals(phoneNumber)) {
-                foundOrders.add(order);
+                return order;
             }
         }
-        return foundOrders;
+        return null;
     }
 }

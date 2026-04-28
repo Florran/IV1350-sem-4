@@ -112,14 +112,6 @@ public class RepairOrder {
     }
 
     /**
-     * Updates the state of this repair order to indicate that the customer has
-     * rejected the proposed repairs.
-     */
-    public void rejectRepairOrder() {
-        this.state = "Rejected";
-    }
-
-    /**
      * Gets the diagnostic report for this repair order.
      * * @return The diagnostic report.
      */
