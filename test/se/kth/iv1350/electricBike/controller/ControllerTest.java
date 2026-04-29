@@ -73,6 +73,18 @@ public class ControllerTest {
     }
 
     @Test
+    public void testFindAllReturnsDTOsForAllStoredOrders() {
+        this.contr.createRepairOrder("Motor stangs av i uppforsbacke", "0705556767", "0001");
+        this.contr.createRepairOrder("Batteriet laddar inte", "0705556768", "0002");
+
+        List<RepairOrderDTO> result = this.contr.findAllRepairOrders();
+
+        assertEquals(2, result.size(), "All stored repair orders should be returned as DTOs");
+        assertNotEquals(result.get(0).getId(), result.get(1).getId(),
+                "Each stored repair order should be represented by a separate DTO with its own id");
+    }
+
+    @Test
     public void testCreatedRepairOrderHasCorrectInformation() {
         String problemDescr = "Batteriet laddar inte";
         String customerPhone = "0705556767";
