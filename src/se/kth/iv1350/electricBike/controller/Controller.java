@@ -127,15 +127,4 @@ public class Controller {
         RepairOrderDTO repairOrderToPrint = repairOrder.createDTO();
         printer.printRepairOrder(repairOrderToPrint);
     }
-
-    /**
-     * Marks a specific repair order as rejected by the customer.
-     *
-     * @param repairOrderId The unique identifier of the repair order.
-     */
-    public void rejectRepairOrder(String repairOrderId) {
-        RepairOrder repairOrder = repairOrderReg.findRepairOrderById(repairOrderId);
-        repairOrder.rejectRepairOrder();
-    }
-
 }

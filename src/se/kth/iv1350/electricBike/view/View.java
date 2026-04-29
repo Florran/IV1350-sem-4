@@ -37,10 +37,8 @@ public class View {
         System.out.println("Systemet har skapat reparationsorder");
 
         System.out.println("\nTekniker söker fram ordern via telefonnummer...");
-        java.util.List<RepairOrderDTO> history = contr.findRepairOrderHistory(customerPhone);
-
-        String generatedOrderId = history.get(0).getId();
-        RepairOrderDTO foundOrder = contr.findRepairOrderById(generatedOrderId);
+        RepairOrderDTO foundOrder = contr.findRepairOrder(customerPhone);
+        String generatedOrderId = foundOrder.getId();
 
         System.out.println("Systemet visar orderdetaljer från DTO:");
         System.out.println(" - Order-ID: " + foundOrder.getId());
