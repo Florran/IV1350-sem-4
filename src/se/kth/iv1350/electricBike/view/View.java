@@ -12,7 +12,8 @@ public class View {
 
     /**
      * The view constructor
-     * * @param contr Controller reference so view can make calls to controller
+     *
+     * @param contr Controller reference so view can make calls to controller
      */
     public View(Controller contr) {
         this.contr = contr;
