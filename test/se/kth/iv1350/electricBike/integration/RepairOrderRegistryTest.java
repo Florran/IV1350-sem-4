@@ -168,4 +168,50 @@ public class RepairOrderRegistryTest {
         assertEquals(1, result.size(), "Created repair order should be stored in the registry");
         assertTrue(result.contains(newOrder), "Stored repair order should be the one that was created");
     }
+
+    @Test
+    public void testFindRepairOrderByNumberInEmptyRegistryReturnsNull() {
+        assertNull(repairOrderReg.findRepairOrderByNumber("0701112233"),
+                "Lookup in empty registry should return null.");
+    }
+
+    @Test
+    public void testFindRepairOrderByNumberReturnsMatchingOrder() {
+        RepairOrder stored = new RepairOrder("Bromsen ligger på", "0701112233", "SN001");
+        repairOrderReg.createRepairOrder(stored);
+
+        RepairOrder result = repairOrderReg.findRepairOrderByNumber("0701112233");
+
+        assertNotNull(result, "Existing order should be found by phone number.");
+        assertEquals(stored.getId(), result.getId(), "Returned order should be the stored one.");
+    }
+
+    @Test
+    public void testFindRepairOrderByNumberUnknownPhoneReturnsNull() {
+        repairOrderReg.createRepairOrder(new RepairOrder("Punktering", "0701112233", "SN001"));
+
+        assertNull(repairOrderReg.findRepairOrderByNumber("0700000000"),
+                "Unknown phone should return null even when registry has orders.");
+    }
+
+    @Test
+    public void testFindRepairOrderByNumberReturnsFirstMatchWhenMultipleExist() {
+        RepairOrder first = new RepairOrder("First", "0701112233", "SN-A");
+        RepairOrder second = new RepairOrder("Second", "0701112233", "SN-B");
+        repairOrderReg.createRepairOrder(first);
+        repairOrderReg.createRepairOrder(second);
+
+        RepairOrder result = repairOrderReg.findRepairOrderByNumber("0701112233");
+
+        assertEquals(first.getId(), result.getId(),
+                "Should return the first matching order, not later ones.");
+    }
+
+    @Test
+    public void testFindRepairOrderByNumberEmptyStringReturnsNull() {
+        repairOrderReg.createRepairOrder(new RepairOrder("Punktering", "0701112233", "SN001"));
+
+        assertNull(repairOrderReg.findRepairOrderByNumber(""),
+                "Empty string phone should return null.");
+    }
 }
