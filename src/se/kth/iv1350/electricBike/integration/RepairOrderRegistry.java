@@ -65,7 +65,7 @@ public class RepairOrderRegistry {
      * @param phoneNumber The customer's phone number.
      * @return The matching RepairOrder, or null if none is found.
      */
-    public RepairOrder findRepairOrderByPhone(String phoneNumber) {
+    public RepairOrder findRepairOrderByNumber(String phoneNumber) {
         for (RepairOrder order : repairOrders) {
             if (order.getCustomerPhone().equals(phoneNumber)) {
                 return order;

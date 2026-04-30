@@ -83,8 +83,8 @@ public class Controller {
      * @param phoneNumber The phone number to search for
      * @return The found RepairOrderDTO, or null if no order was found
      */
-    public RepairOrderDTO findRepairOrder(String phoneNumber) {
-        RepairOrder order = repairOrderReg.findRepairOrderByPhone(phoneNumber);
+    public RepairOrderDTO findRepairOrderByNumber(String phoneNumber) {
+        RepairOrder order = repairOrderReg.findRepairOrderByNumber(phoneNumber);
 
         if (order != null) {
             return order.createDTO();
