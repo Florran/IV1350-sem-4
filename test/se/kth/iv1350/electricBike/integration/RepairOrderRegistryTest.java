@@ -82,4 +82,43 @@ public class RepairOrderRegistryTest {
 
         assertNull(result, "Null id should return null without throwing.");
     }
+
+    @Test
+    public void testUpdateExistingOrderKeepsItRetrievableAndDoesNotDuplicate() {
+        RepairOrder order = new RepairOrder("Bromsen ligger på", "0701112233", "SN001");
+        registry.createRepairOrder(order);
+
+        registry.updateRepairOrder(order);
+
+        assertNotNull(registry.findRepairOrderById(order.getId()),
+                "Order should still be retrievable after update with matching id.");
+        assertEquals(1, registry.findAllRepairOrders().size(),
+                "Update with matching id should replace, not add a duplicate.");
+    }
+
+    @Test
+    public void testUpdateNonExistingOrderDoesNotAddIt() {
+        RepairOrder stored = new RepairOrder("Bromsen ligger på", "0701112233", "SN001");
+        RepairOrder notStored = new RepairOrder("Punktering", "0700000002", "SN002");
+        registry.createRepairOrder(stored);
+
+        registry.updateRepairOrder(notStored);
+
+        assertNull(registry.findRepairOrderById(notStored.getId()),
+                "Update with unknown id should not insert the order.");
+        assertEquals(1, registry.findAllRepairOrders().size(),
+                "Registry should still contain only the originally stored order.");
+        assertEquals(stored.getId(), registry.findAllRepairOrders().get(0).getId(),
+                "The originally stored order should remain in the registry.");
+    }
+
+    @Test
+    public void testUpdateOnEmptyRegistryDoesNothing() {
+        RepairOrder order = new RepairOrder("Punktering", "0700000002", "SN002");
+
+        registry.updateRepairOrder(order);
+
+        assertEquals(0, registry.findAllRepairOrders().size(),
+                "Update on empty registry should not insert anything.");
+    }
 }
