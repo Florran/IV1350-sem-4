@@ -127,7 +127,8 @@ public class RepairOrder {
 
     /**
      * Gets the diagnostic report for this repair order.
-     * * @return The diagnostic report.
+     *
+     * @return The diagnostic report.
      */
     public DiagnosticReport getDiagnosticReport() {
         return this.diagnosticReport;
