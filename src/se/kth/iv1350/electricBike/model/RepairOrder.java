@@ -42,6 +42,39 @@ public class RepairOrder {
     }
 
     /**
+     * Creates a repair order from a DTO.
+     *
+     * @param dto The DTO to create the order from.
+     */
+    public RepairOrder(RepairOrderDTO dto) {
+        this.id = dto.getId();
+        this.problemDescr = dto.getProblemDescr();
+        this.customerPhone = dto.getCustomerPhone();
+        this.bikeSerialNo = dto.getBikeSerialNo();
+        this.date = LocalDateTime.parse(dto.getDate());
+        this.estimatedCompletionDate = LocalDateTime.parse(dto.getEstimatedCompletionDate());
+        this.state = dto.getState();
+        this.diagnosticReport = new DiagnosticReport(dto.getDiagnosticResults());
+        this.repairTasks = new ArrayList<>();
+        for (RepairTaskDTO taskDto : dto.getRepairTasks()) {
+            this.repairTasks.add(new RepairTask(taskDto.getDescription(), taskDto.getCost(), taskDto.isComplete()));
+        }
+    }
+
+    /**
+     * Calculates the total cost of all repair tasks in this order.
+     *
+     * @return The total cost.
+     */
+    public double getTotalCost() {
+        double total = 0;
+        for (RepairTask task : repairTasks) {
+            total += task.getCost();
+        }
+        return total;
+    }
+
+    /**
      * Gets the unique identifier for this repair order.
      *
      * @return The repair order ID.
@@ -78,6 +111,33 @@ public class RepairOrder {
     }
 
     /**
+     * Gets the serial number of the bike being repaired.
+     *
+     * @return The bike's serial number.
+     */
+    public String getBikeSerialNo() {
+        return bikeSerialNo;
+    }
+
+    /**
+     * Gets the date and time when the repair order was created.
+     *
+     * @return The creation date and time.
+     */
+    public LocalDateTime getDate() {
+        return date;
+    }
+
+    /**
+     * Gets the estimated completion date and time for this repair.
+     *
+     * @return The estimated completion date and time.
+     */
+    public LocalDateTime getEstimatedCompletionDate() {
+        return estimatedCompletionDate;
+    }
+
+    /**
      * Creates a Data Transfer Object representing this repair order.
      *
      * @return A new instance of RepairOrderDTO containing order details.
@@ -95,6 +155,7 @@ public class RepairOrder {
                 bikeSerialNo,
                 date.toString(),
                 estimatedCompletionDate.toString(),
+                getTotalCost(),
                 diagnosticReport.getResults(),
                 taskDTOs);
     }
@@ -112,9 +173,10 @@ public class RepairOrder {
      * Adds a proposed repair task to this repair order.
      *
      * @param description A description of the work that needs to be done.
+     * @param cost        The cost of this specific repair task.
      */
-    public void addRepairTask(String description) {
-        this.repairTasks.add(new RepairTask(description));
+    public void addRepairTask(String description, double cost) {
+        this.repairTasks.add(new RepairTask(description, cost));
     }
 
     /**
@@ -141,32 +203,5 @@ public class RepairOrder {
      */
     public List<RepairTask> getRepairTasks() {
         return new ArrayList<>(this.repairTasks);
-    }
-
-    /**
-     * Gets the serial number of the bike being repaired.
-     *
-     * @return The bike's serial number.
-     */
-    public String getBikeSerialNo() {
-        return bikeSerialNo;
-    }
-
-    /**
-     * Gets the date and time when the repair order was created.
-     *
-     * @return The creation date and time.
-     */
-    public LocalDateTime getDate() {
-        return date;
-    }
-
-    /**
-     * Gets the estimated completion date and time for this repair.
-     *
-     * @return The estimated completion date and time.
-     */
-    public LocalDateTime getEstimatedCompletionDate() {
-        return estimatedCompletionDate;
     }
 }

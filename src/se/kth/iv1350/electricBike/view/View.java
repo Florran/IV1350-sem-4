@@ -4,6 +4,8 @@ import java.util.List;
 import se.kth.iv1350.electricBike.controller.Controller;
 import se.kth.iv1350.electricBike.integration.CustomerDTO;
 import se.kth.iv1350.electricBike.integration.RepairOrderDTO;
+import se.kth.iv1350.electricBike.model.discount.DiscountStrategy;
+import se.kth.iv1350.electricBike.model.discount.LoyaltyDiscount;
 
 /**
  * Represents the view layer used to run the application flow.
@@ -57,9 +59,9 @@ public class View {
         contr.addDiagnosticResult(generatedOrderId, "Slitet batterifäste");
         System.out.println("Diagnostiska resultat har sparats i ordern.");
 
-        System.out.println("\nTekniker föreslår reparationer...");
-        contr.addRepairTask(generatedOrderId, "Byt ut och löd om motorkabel");
-        contr.addRepairTask(generatedOrderId, "Montera nytt batterifäste");
+        System.out.println("\nTekniker föreslår reparationer (inkluderar nu priser)...");
+        contr.addRepairTask(generatedOrderId, "Byt ut och löd om motorkabel", 450.0);
+        contr.addRepairTask(generatedOrderId, "Montera nytt batterifäste", 200.0);
         System.out.println("Reparationsuppgifter har sparats i ordern.");
 
         System.out.println("\n--- Kunden kommer tillbaka för att hämta cykeln ---");
@@ -67,6 +69,11 @@ public class View {
         RepairOrderDTO foundOrder = contr.findRepairOrderByNumber(customerPhone);
         System.out.println("Hittad order:");
         System.out.print(foundOrder);
+
+        System.out.println("\nApplicerar rabatt (LoyaltyDiscount)...");
+        DiscountStrategy loyaltyDiscount = new LoyaltyDiscount();
+        double finalPrice = contr.calculateTotalCost(generatedOrderId, loyaltyDiscount);
+        System.out.println("Totalkostnad efter rabatt: " + finalPrice + " kr");
 
         System.out.println("\nKunden accepterar reparationen.");
         System.out.println("\n--- Skrivare skriver ut kvitto ---");

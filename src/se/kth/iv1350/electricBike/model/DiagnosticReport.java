@@ -17,6 +17,15 @@ public class DiagnosticReport {
     }
 
     /**
+     * Creates a diagnostic report from an existing list of results.
+     *
+     * @param existingResults The results to populate the report with.
+     */
+    public DiagnosticReport(List<String> existingResults) {
+        this.results = new ArrayList<>(existingResults);
+    }
+
+    /**
      * Adds a single finding to this report.
      *
      * @param result A description of the fault or finding.
