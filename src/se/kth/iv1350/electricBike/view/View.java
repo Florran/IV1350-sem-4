@@ -3,6 +3,7 @@ package se.kth.iv1350.electricBike.view;
 import java.util.List;
 import se.kth.iv1350.electricBike.controller.Controller;
 import se.kth.iv1350.electricBike.integration.CustomerDTO;
+import se.kth.iv1350.electricBike.integration.CustomerNotFoundException;
 import se.kth.iv1350.electricBike.integration.RepairOrderDTO;
 
 /**
@@ -32,7 +33,13 @@ public class View {
 
         System.out.println("--- Kunden lämnar in cykeln ---");
         System.out.println("Receptionist letar upp kund med telefonnummer " + customerPhone + "...");
-        CustomerDTO foundCustomer = contr.findCustomer(customerPhone);
+        CustomerDTO foundCustomer;
+        try {
+            foundCustomer = contr.findCustomer(customerPhone);
+        } catch (CustomerNotFoundException exc) {
+            System.out.println("Ingen kund hittades med telefonnummer " + exc.getNumber() + ". Kontrollera numret och försök igen! ");
+            return;
+        }
         System.out.println("Kund hittades:");
         System.out.print(foundCustomer);
 

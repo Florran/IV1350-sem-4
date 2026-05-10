@@ -2,11 +2,8 @@ package se.kth.iv1350.electricBike.controller;
 
 import java.util.ArrayList;
 import java.util.List;
-import se.kth.iv1350.electricBike.integration.CustomerDTO;
-import se.kth.iv1350.electricBike.integration.CustomerRegistry;
-import se.kth.iv1350.electricBike.integration.Printer;
-import se.kth.iv1350.electricBike.integration.RepairOrderDTO;
-import se.kth.iv1350.electricBike.integration.RepairOrderRegistry;
+
+import se.kth.iv1350.electricBike.integration.*;
 import se.kth.iv1350.electricBike.model.RepairOrder;
 
 /**
@@ -31,14 +28,14 @@ public class Controller {
     }
 
     /**
-     * Tries to find a customer based on a specified phone number
-     * 
-     * @param phoneNumber The phone number used to search for the customer
-     * @return Returns the found customer, or null if no matching customer exists
+     * Tries to find a customer based on a specified phone number.
+     *
+     * @param phoneNumber The phone number used to search for the customer.
+     * @return The found customer.
+     * @throws CustomerNotFoundException if no customer matches the given phone number.
      */
-    public CustomerDTO findCustomer(String phoneNumber) {
-        CustomerDTO foundCustomer = customerReg.findCustomer(phoneNumber);
-        return foundCustomer;
+    public CustomerDTO findCustomer(String phoneNumber) throws CustomerNotFoundException {
+        return customerReg.findCustomer(phoneNumber);
     }
 
     /**

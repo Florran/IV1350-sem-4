@@ -38,7 +38,7 @@ public class ControllerTest {
     }
 
     @Test
-    public void testFindExistingCustomer() {
+    public void testFindExistingCustomer() throws CustomerNotFoundException {
         String phone = "0705556767";
         CustomerDTO result = this.contr.findCustomer(phone);
         assertNotNull(result, "Existing customer was not found");
@@ -47,19 +47,45 @@ public class ControllerTest {
     }
 
     @Test
-    public void testFindUnknownCustomerReturnsNull() {
+    public void testFindUnknownCustomerThrowsException() {
         String phone = "0700000000";
-        CustomerDTO result = this.contr.findCustomer(phone);
-
-        assertNull(result, "invalid phone number should return null");
+        try {
+            this.contr.findCustomer(phone);
+            fail("Expected CustomerNotFoundException for unknown phone number.");
+        } catch (CustomerNotFoundException exc) {
+            assertTrue(exc.getMessage().contains(phone),
+                    "Exception message should contain the searched phone number, was: " + exc.getMessage());
+            assertEquals(phone, exc.getNumber(),
+                    "Exception should carry the searched phone number.");
+        }
     }
 
     @Test
-    public void testFindCustomerEmptyPhoneNrReturnsNull() {
+    public void testFindCustomerEmptyPhoneNrThrowsException() {
         String phone = "";
-        CustomerDTO result = this.contr.findCustomer(phone);
+        try {
+            this.contr.findCustomer(phone);
+            fail("Expected CustomerNotFoundException for empty phone number.");
+        } catch (CustomerNotFoundException exc) {
+            assertEquals(phone, exc.getNumber(),
+                    "Exception should carry the searched phone number.");
+        }
+    }
 
-        assertNull(result, "no phone number should return null");
+    @Test
+    public void testFailedLookupDoesNotAffectSubsequentLookup() {
+        try {
+            this.contr.findCustomer("0700000000");
+            fail("Expected CustomerNotFoundException for unknown phone number.");
+        } catch (CustomerNotFoundException exc) {
+            // expected
+        }
+        try {
+            CustomerDTO result = this.contr.findCustomer("0705556767");
+            assertNotNull(result, "Controller should still find existing customer after a failed lookup.");
+        } catch (CustomerNotFoundException exc) {
+            fail("Existing customer lookup should not throw after a previous failed lookup.");
+        }
     }
 
     @Test
