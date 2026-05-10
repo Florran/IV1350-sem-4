@@ -2,9 +2,13 @@ package se.kth.iv1350.electricBike.model;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import java.util.Arrays;
 import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Contains tests for the DiagnosticReport class.
+ */
 class DiagnosticReportTest {
     private DiagnosticReport report;
 
@@ -52,5 +56,16 @@ class DiagnosticReportTest {
         List<String> listAfterClear = report.getResults();
         assertEquals(1, listAfterClear.size(),
                 "Inkapslingen misslyckades! Original-listan ändrades när kopian ändrades.");
+    }
+
+    @Test
+    void testConstructorWithExistingListPopulatesCorrectly() {
+        List<String> existingResults = Arrays.asList("Fel på motorn", "Kabelbrott");
+        DiagnosticReport populatedReport = new DiagnosticReport(existingResults);
+
+        List<String> results = populatedReport.getResults();
+
+        assertEquals(2, results.size(), "Rapporten skapades inte med rätt antal resultat.");
+        assertTrue(results.containsAll(existingResults), "Rapporten saknar resultat från input-listan.");
     }
 }

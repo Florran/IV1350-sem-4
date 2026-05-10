@@ -18,8 +18,7 @@ public class RepairOrderRegistry {
 
     /**
      * Stores a repair order DTO in the registry.
-     * 
-     * @param order The repair order DTO to store.
+     * * @param order The repair order DTO to store.
      */
     public void createRepairOrder(RepairOrderDTO order) {
         repairOrders.add(order);
@@ -27,8 +26,7 @@ public class RepairOrderRegistry {
 
     /**
      * Finds all repair orders stored in the registry.
-     * 
-     * @return A list containing all stored repair order DTOs.
+     * * @return A list containing all stored repair order DTOs.
      */
     public List<RepairOrderDTO> findAllRepairOrders() {
         return new ArrayList<>(repairOrders);
@@ -36,11 +34,15 @@ public class RepairOrderRegistry {
 
     /**
      * Finds a repair order by its unique ID.
+     * * @param id The unique ID of the order to find.
      * 
-     * @param id The unique ID of the order to find.
-     * @return The matching RepairOrderDTO, or null if no match exists.
+     * @return The matching RepairOrderDTO, or null if not found.
      */
     public RepairOrderDTO findRepairOrderById(String id) {
+        if (id == null) {
+            return null;
+        }
+
         for (RepairOrderDTO order : repairOrders) {
             if (order.getId().equals(id)) {
                 return order;
@@ -51,8 +53,7 @@ public class RepairOrderRegistry {
 
     /**
      * Updates a repair order in the registry, matching on its id.
-     * 
-     * @param updatedOrder The repair order DTO to update.
+     * * @param updatedOrder The repair order DTO to update.
      */
     public void updateRepairOrder(RepairOrderDTO updatedOrder) {
         for (int i = 0; i < repairOrders.size(); i++) {
@@ -66,11 +67,15 @@ public class RepairOrderRegistry {
     /**
      * Finds an active repair order belonging to a customer with the given phone
      * number.
+     * * @param phoneNumber The customer's phone number.
      * 
-     * @param phoneNumber The customer's phone number.
-     * @return The matching RepairOrderDTO, or null if none is found.
+     * @return The matching RepairOrderDTO, or null if not found.
      */
     public RepairOrderDTO findRepairOrderByNumber(String phoneNumber) {
+        if (phoneNumber == null) {
+            return null;
+        }
+
         for (RepairOrderDTO order : repairOrders) {
             if (order.getCustomerPhone().equals(phoneNumber)) {
                 return order;

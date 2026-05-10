@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.UUID;
 import se.kth.iv1350.electricBike.integration.RepairOrderDTO;
 import se.kth.iv1350.electricBike.integration.RepairTaskDTO;
-import se.kth.iv1350.electricBike.model.discount.DiscountStrategy;
 
 /**
  * Represents a repair order for a bike, containing customer details,
@@ -45,18 +44,18 @@ public class RepairOrder {
     }
 
     /**
-     * Reconstructs a repair order from a Data Transfer Object.
+     * Creates a repair order from a DTO.
      *
-     * @param dto The DTO containing the saved state of the repair order.
+     * @param dto The DTO to create the order from.
      */
     public RepairOrder(RepairOrderDTO dto) {
         this.id = dto.getId();
-        this.state = dto.getState();
         this.problemDescr = dto.getProblemDescr();
         this.customerPhone = dto.getCustomerPhone();
         this.bikeSerialNo = dto.getBikeSerialNo();
         this.date = LocalDateTime.parse(dto.getDate());
         this.estimatedCompletionDate = LocalDateTime.parse(dto.getEstimatedCompletionDate());
+        this.state = dto.getState();
         this.diagnosticReport = new DiagnosticReport(dto.getDiagnosticResults());
         this.repairTasks = new ArrayList<>();
         for (RepairTaskDTO taskDto : dto.getRepairTasks()) {
@@ -64,14 +63,35 @@ public class RepairOrder {
         }
     }
 
+    /**
+     * Adds an observer to be notified when the repair order is updated.
+     * * @param obs The observer to add.
+     */
     public void addObserver(RepairOrderObserver obs) {
         observers.add(obs);
     }
 
+    /**
+     * Notifies all registered observers that the order has been updated.
+     */
     private void notifyObservers() {
+        RepairOrderDTO dto = createDTO();
         for (RepairOrderObserver obs : observers) {
-            obs.repairOrderUpdated(this.createDTO());
+            obs.repairOrderUpdated(dto);
         }
+    }
+
+    /**
+     * Calculates the total cost of all repair tasks in this order.
+     *
+     * @return The total cost.
+     */
+    public double getTotalCost() {
+        double total = 0;
+        for (RepairTask task : repairTasks) {
+            total += task.getCost();
+        }
+        return total;
     }
 
     /**
@@ -111,17 +131,42 @@ public class RepairOrder {
     }
 
     /**
+     * Gets the serial number of the bike being repaired.
+     *
+     * @return The bike's serial number.
+     */
+    public String getBikeSerialNo() {
+        return bikeSerialNo;
+    }
+
+    /**
+     * Gets the date and time when the repair order was created.
+     *
+     * @return The creation date and time.
+     */
+    public LocalDateTime getDate() {
+        return date;
+    }
+
+    /**
+     * Gets the estimated completion date and time for this repair.
+     *
+     * @return The estimated completion date and time.
+     */
+    public LocalDateTime getEstimatedCompletionDate() {
+        return estimatedCompletionDate;
+    }
+
+    /**
      * Creates a Data Transfer Object representing this repair order.
      *
      * @return A new instance of RepairOrderDTO containing order details.
      */
     public RepairOrderDTO createDTO() {
         List<RepairTaskDTO> taskDTOs = new ArrayList<>();
-        double currentTotalCost = 0.0;
 
         for (RepairTask task : repairTasks) {
             taskDTOs.add(task.createDTO());
-            currentTotalCost += task.getCost();
         }
 
         return new RepairOrderDTO(
@@ -132,7 +177,7 @@ public class RepairOrder {
                 bikeSerialNo,
                 date.toString(),
                 estimatedCompletionDate.toString(),
-                currentTotalCost,
+                getTotalCost(),
                 diagnosticReport.getResults(),
                 taskDTOs);
     }
@@ -156,29 +201,6 @@ public class RepairOrder {
     public void addRepairTask(String description, double cost) {
         this.repairTasks.add(new RepairTask(description, cost));
         notifyObservers();
-    }
-
-    /**
-     * Gets the total base cost of all repair tasks before discounts.
-     * * @return The total cost.
-     */
-    public double getTotalCost() {
-        double total = 0.0;
-        for (RepairTask task : repairTasks) {
-            total += task.getCost();
-        }
-        return total;
-    }
-
-    /**
-     * Calculates the total cost of all repair tasks, applying the provided
-     * discount.
-     *
-     * @param discountStrategy The discount rule to apply.
-     * @return The final total price after discount.
-     */
-    public double calculateTotalCost(DiscountStrategy discountStrategy) {
-        return discountStrategy.applyDiscount(getTotalCost());
     }
 
     /**
@@ -206,32 +228,5 @@ public class RepairOrder {
      */
     public List<RepairTask> getRepairTasks() {
         return new ArrayList<>(this.repairTasks);
-    }
-
-    /**
-     * Gets the serial number of the bike being repaired.
-     *
-     * @return The bike's serial number.
-     */
-    public String getBikeSerialNo() {
-        return bikeSerialNo;
-    }
-
-    /**
-     * Gets the date and time when the repair order was created.
-     *
-     * @return The creation date and time.
-     */
-    public LocalDateTime getDate() {
-        return date;
-    }
-
-    /**
-     * Gets the estimated completion date and time for this repair.
-     *
-     * @return The estimated completion date and time.
-     */
-    public LocalDateTime getEstimatedCompletionDate() {
-        return estimatedCompletionDate;
     }
 }

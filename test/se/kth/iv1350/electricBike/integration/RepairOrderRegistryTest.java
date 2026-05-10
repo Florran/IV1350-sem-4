@@ -92,7 +92,7 @@ public class RepairOrderRegistryTest {
     }
 
     @Test
-    public void testUpdateExistingOrderKeepsItRetrievableAndDoesNotDuplicate() {
+    public void testUpdateExistingOrderKeepsItRetrievable() {
         RepairOrder order = new RepairOrder("Bromsen ligger på", "0701112233", "SN001");
         RepairOrderDTO dto = order.createDTO();
         repairOrderReg.createRepairOrder(dto);

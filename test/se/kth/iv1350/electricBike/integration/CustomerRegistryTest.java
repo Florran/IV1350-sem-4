@@ -6,6 +6,9 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+/**
+ * Contains tests for the CustomerRegistry class.
+ */
 public class CustomerRegistryTest {
 
     private CustomerRegistry customerReg;

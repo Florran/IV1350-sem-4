@@ -29,11 +29,12 @@ public class RepairOrderTest {
     @Test
     void testAddRepairTask() {
         String expectedTaskDesc = "Replace gear cable";
-        repairOrder.addRepairTask(expectedTaskDesc, 250.0);
+        double expectedCost = 250.0;
+        repairOrder.addRepairTask(expectedTaskDesc, expectedCost);
 
         boolean taskFound = false;
         for (RepairTask task : repairOrder.getRepairTasks()) {
-            if (task.getDescription().equals(expectedTaskDesc)) {
+            if (task.getDescription().equals(expectedTaskDesc) && task.getCost() == expectedCost) {
                 taskFound = true;
                 break;
             }
