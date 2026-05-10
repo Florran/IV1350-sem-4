@@ -1,6 +1,8 @@
 package se.kth.iv1350.electricBike.controller;
 
 import java.util.List;
+
+import se.kth.iv1350.electricBike.integration.*;
 import se.kth.iv1350.electricBike.integration.*;
 import se.kth.iv1350.electricBike.model.RepairOrder;
 import se.kth.iv1350.electricBike.model.discount.DiscountStrategy;
@@ -32,6 +34,8 @@ public class Controller {
      * @param phoneNumber The phone number to search for.
      * @return The found customer, or null.
      */
+    public CustomerDTO findCustomer(String phoneNumber) throws CustomerNotFoundException {
+        return customerReg.findCustomer(phoneNumber);
     public CustomerDTO findCustomer(String phoneNumber) {
         return customerReg.findCustomer(phoneNumber);
     }

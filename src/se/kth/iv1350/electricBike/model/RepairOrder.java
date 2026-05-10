@@ -6,12 +6,15 @@ import java.util.List;
 import java.util.UUID;
 import se.kth.iv1350.electricBike.integration.RepairOrderDTO;
 import se.kth.iv1350.electricBike.integration.RepairTaskDTO;
+import se.kth.iv1350.electricBike.model.discount.DiscountStrategy;
 
 /**
  * Represents a repair order for a bike, containing customer details,
  * bike details, and the current status of the repair process.
  */
 public class RepairOrder {
+    private List<RepairOrderObserver> observers = new ArrayList<>();
+
     private String id;
     private String problemDescr;
     private String customerPhone;
@@ -41,37 +44,14 @@ public class RepairOrder {
         this.repairTasks = new ArrayList<>();
     }
 
-    /**
-     * Creates a repair order from a DTO.
-     *
-     * @param dto The DTO to create the order from.
-     */
-    public RepairOrder(RepairOrderDTO dto) {
-        this.id = dto.getId();
-        this.problemDescr = dto.getProblemDescr();
-        this.customerPhone = dto.getCustomerPhone();
-        this.bikeSerialNo = dto.getBikeSerialNo();
-        this.date = LocalDateTime.parse(dto.getDate());
-        this.estimatedCompletionDate = LocalDateTime.parse(dto.getEstimatedCompletionDate());
-        this.state = dto.getState();
-        this.diagnosticReport = new DiagnosticReport(dto.getDiagnosticResults());
-        this.repairTasks = new ArrayList<>();
-        for (RepairTaskDTO taskDto : dto.getRepairTasks()) {
-            this.repairTasks.add(new RepairTask(taskDto.getDescription(), taskDto.getCost(), taskDto.isComplete()));
-        }
+    public void addObserver(RepairOrderObserver obs) {
+        observers.add(obs);
     }
 
-    /**
-     * Calculates the total cost of all repair tasks in this order.
-     *
-     * @return The total cost.
-     */
-    public double getTotalCost() {
-        double total = 0;
-        for (RepairTask task : repairTasks) {
-            total += task.getCost();
+    private void notifyObservers() {
+        for (RepairOrderObserver obs : observers) {
+            obs.repairOrderUpdated(this.createDTO());
         }
-        return total;
     }
 
     /**
@@ -111,6 +91,98 @@ public class RepairOrder {
     }
 
     /**
+     * Creates a Data Transfer Object representing this repair order.
+     *
+     * @return A new instance of RepairOrderDTO containing order details.
+     */
+    public RepairOrderDTO createDTO() {
+        List<RepairTaskDTO> taskDTOs = new ArrayList<>();
+        for (RepairTask task : repairTasks) {
+            taskDTOs.add(task.createDTO());
+        }
+
+        double currentTotalCost = 0.0;
+        for (RepairTask task : repairTasks) {
+            currentTotalCost += task.getCost();
+        }
+
+        return new RepairOrderDTO(
+                id,
+                state,
+                problemDescr,
+                customerPhone,
+                bikeSerialNo,
+                date.toString(),
+                estimatedCompletionDate.toString(),
+                currentTotalCost,
+                diagnosticReport.getResults(),
+                taskDTOs);
+    }
+
+    /**
+     * Adds a new finding to this repair order's diagnostic report.
+     *
+     * @param result A description of the diagnostic finding.
+     */
+    public void addDiagnosticResult(String result) {
+        this.diagnosticReport.addResult(result);
+        notifyObservers();
+    }
+
+    /**
+     * Adds a proposed repair task to this repair order, including its cost.
+     *
+     * @param description A description of the work that needs to be done.
+     * @param cost        The cost of this specific repair task.
+     */
+    public void addRepairTask(String description, double cost) {
+        this.repairTasks.add(new RepairTask(description, cost));
+        notifyObservers();
+    }
+
+    /**
+     * Calculates the total cost of all repair tasks, applying the provided
+     * discount.
+     *
+     * @param discountStrategy The discount rule to apply.
+     * @return The final total price after discount.
+     */
+    public double calculateTotalCost(DiscountStrategy discountStrategy) {
+        double subtotal = 0.0;
+        for (RepairTask task : repairTasks) {
+            subtotal += task.getCost();
+        }
+        return discountStrategy.applyDiscount(subtotal);
+    }
+
+    /**
+     * Updates the state of this repair order to indicate that the customer has
+     * accepted the proposed repairs.
+     */
+    public void acceptRepairOrder() {
+        this.state = "Accepted";
+        notifyObservers();
+    }
+
+    /**
+     * Gets the diagnostic report for this repair order.
+     *
+     * @return The diagnostic report.
+     */
+    public DiagnosticReport getDiagnosticReport() {
+        return this.diagnosticReport;
+    }
+
+    /**
+     * Gets the proposed repair tasks for this repair order.
+     *
+     * @return A list of the proposed repair tasks.
+     */
+    public List<RepairTask> getRepairTasks() {
+        return new ArrayList<>(this.repairTasks);
+    }
+
+    /**
      * Gets the serial number of the bike being repaired.
      *
      * @return The bike's serial number.
@@ -137,71 +209,4 @@ public class RepairOrder {
         return estimatedCompletionDate;
     }
 
-    /**
-     * Creates a Data Transfer Object representing this repair order.
-     *
-     * @return A new instance of RepairOrderDTO containing order details.
-     */
-    public RepairOrderDTO createDTO() {
-        List<RepairTaskDTO> taskDTOs = new ArrayList<>();
-        for (RepairTask task : repairTasks) {
-            taskDTOs.add(task.createDTO());
-        }
-        return new RepairOrderDTO(
-                id,
-                state,
-                problemDescr,
-                customerPhone,
-                bikeSerialNo,
-                date.toString(),
-                estimatedCompletionDate.toString(),
-                getTotalCost(),
-                diagnosticReport.getResults(),
-                taskDTOs);
-    }
-
-    /**
-     * Adds a new finding to this repair order's diagnostic report.
-     *
-     * @param result A description of the diagnostic finding.
-     */
-    public void addDiagnosticResult(String result) {
-        this.diagnosticReport.addResult(result);
-    }
-
-    /**
-     * Adds a proposed repair task to this repair order.
-     *
-     * @param description A description of the work that needs to be done.
-     * @param cost        The cost of this specific repair task.
-     */
-    public void addRepairTask(String description, double cost) {
-        this.repairTasks.add(new RepairTask(description, cost));
-    }
-
-    /**
-     * Updates the state of this repair order to indicate that the customer has
-     * accepted the proposed repairs.
-     */
-    public void acceptRepairOrder() {
-        this.state = "Accepted";
-    }
-
-    /**
-     * Gets the diagnostic report for this repair order.
-     *
-     * @return The diagnostic report.
-     */
-    public DiagnosticReport getDiagnosticReport() {
-        return this.diagnosticReport;
-    }
-
-    /**
-     * Gets the proposed repair tasks for this repair order.
-     *
-     * @return A list of the proposed repair tasks.
-     */
-    public List<RepairTask> getRepairTasks() {
-        return new ArrayList<>(this.repairTasks);
-    }
 }
