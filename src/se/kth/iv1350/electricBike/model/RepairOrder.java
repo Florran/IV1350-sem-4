@@ -44,6 +44,26 @@ public class RepairOrder {
         this.repairTasks = new ArrayList<>();
     }
 
+    /**
+     * Reconstructs a repair order from a Data Transfer Object.
+     *
+     * @param dto The DTO containing the saved state of the repair order.
+     */
+    public RepairOrder(RepairOrderDTO dto) {
+        this.id = dto.getId();
+        this.state = dto.getState();
+        this.problemDescr = dto.getProblemDescr();
+        this.customerPhone = dto.getCustomerPhone();
+        this.bikeSerialNo = dto.getBikeSerialNo();
+        this.date = LocalDateTime.parse(dto.getDate());
+        this.estimatedCompletionDate = LocalDateTime.parse(dto.getEstimatedCompletionDate());
+        this.diagnosticReport = new DiagnosticReport(dto.getDiagnosticResults());
+        this.repairTasks = new ArrayList<>();
+        for (RepairTaskDTO taskDto : dto.getRepairTasks()) {
+            this.repairTasks.add(new RepairTask(taskDto.getDescription(), taskDto.getCost(), taskDto.isComplete()));
+        }
+    }
+
     public void addObserver(RepairOrderObserver obs) {
         observers.add(obs);
     }
@@ -97,12 +117,10 @@ public class RepairOrder {
      */
     public RepairOrderDTO createDTO() {
         List<RepairTaskDTO> taskDTOs = new ArrayList<>();
+        double currentTotalCost = 0.0;
+
         for (RepairTask task : repairTasks) {
             taskDTOs.add(task.createDTO());
-        }
-
-        double currentTotalCost = 0.0;
-        for (RepairTask task : repairTasks) {
             currentTotalCost += task.getCost();
         }
 
@@ -141,6 +159,18 @@ public class RepairOrder {
     }
 
     /**
+     * Gets the total base cost of all repair tasks before discounts.
+     * * @return The total cost.
+     */
+    public double getTotalCost() {
+        double total = 0.0;
+        for (RepairTask task : repairTasks) {
+            total += task.getCost();
+        }
+        return total;
+    }
+
+    /**
      * Calculates the total cost of all repair tasks, applying the provided
      * discount.
      *
@@ -148,11 +178,7 @@ public class RepairOrder {
      * @return The final total price after discount.
      */
     public double calculateTotalCost(DiscountStrategy discountStrategy) {
-        double subtotal = 0.0;
-        for (RepairTask task : repairTasks) {
-            subtotal += task.getCost();
-        }
-        return discountStrategy.applyDiscount(subtotal);
+        return discountStrategy.applyDiscount(getTotalCost());
     }
 
     /**
@@ -208,5 +234,4 @@ public class RepairOrder {
     public LocalDateTime getEstimatedCompletionDate() {
         return estimatedCompletionDate;
     }
-
 }

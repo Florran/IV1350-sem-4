@@ -6,6 +6,9 @@ import se.kth.iv1350.electricBike.integration.RepairOrderDTO;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Contains tests for the RepairOrder class.
+ */
 public class RepairOrderTest {
     private RepairOrder repairOrder;
 
@@ -20,14 +23,13 @@ public class RepairOrderTest {
         repairOrder.addDiagnosticResult(expectedResult);
 
         DiagnosticReport report = repairOrder.getDiagnosticReport();
-        assertTrue(report.getResults().contains(expectedResult),
-                "The diagnostic result should be added to the report.");
+        assertTrue(report.getResults().contains(expectedResult));
     }
 
     @Test
     void testAddRepairTask() {
         String expectedTaskDesc = "Replace gear cable";
-        repairOrder.addRepairTask(expectedTaskDesc);
+        repairOrder.addRepairTask(expectedTaskDesc, 250.0);
 
         boolean taskFound = false;
         for (RepairTask task : repairOrder.getRepairTasks()) {
@@ -36,70 +38,63 @@ public class RepairOrderTest {
                 break;
             }
         }
-        assertTrue(taskFound, "The repair task should be added to the order.");
+        assertTrue(taskFound);
     }
 
     @Test
     void testAcceptRepairOrderChangesState() {
         repairOrder.acceptRepairOrder();
-        assertEquals("Accepted", repairOrder.getState(),
-                "The state should change to 'Accepted'.");
+        assertEquals("Accepted", repairOrder.getState());
     }
 
     @Test
     public void testNewRepairOrderHasInitialState() {
-        RepairOrder repairOrder = new RepairOrder("Batteriet laddar inte", "0705556767", "0001");
-
-        assertEquals("Newly created", repairOrder.getState(), "New repair order should have initial state");
+        RepairOrder order = new RepairOrder("Batteriet laddar inte", "0705556767", "0001");
+        assertEquals("Newly created", order.getState());
     }
 
     @Test
     public void testNewRepairOrderKeepsProblemDescription() {
         String problemDescr = "Motor stangs av i uppforsbacke";
-        RepairOrder repairOrder = new RepairOrder(problemDescr, "0705556767", "0001");
-
-        assertEquals(problemDescr, repairOrder.getProblemDescr(), "Repair order should keep the problem description");
+        RepairOrder order = new RepairOrder(problemDescr, "0705556767", "0001");
+        assertEquals(problemDescr, order.getProblemDescr());
     }
 
     @Test
     public void testNewRepairOrderGetsId() {
-        RepairOrder repairOrder = new RepairOrder("Batteriet laddar inte", "0705556767", "0001");
-
-        assertNotNull(repairOrder.getId(), "Repair order should have an id");
-        assertFalse(repairOrder.getId().trim().isEmpty(), "Repair order id should not be blank");
+        RepairOrder order = new RepairOrder("Batteriet laddar inte", "0705556767", "0001");
+        assertNotNull(order.getId());
+        assertFalse(order.getId().trim().isEmpty());
     }
 
     @Test
     public void testCreateDTOContainsRepairOrderInformation() {
         String problemDescr = "Bromsen ligger pa";
-        RepairOrder repairOrder = new RepairOrder(problemDescr, "0705556767", "0001");
+        RepairOrder order = new RepairOrder(problemDescr, "0705556767", "0001");
 
-        RepairOrderDTO dto = repairOrder.createDTO();
+        RepairOrderDTO dto = order.createDTO();
 
-        assertEquals(repairOrder.getId(), dto.getId(), "DTO should contain the repair order id");
-        assertEquals(repairOrder.getState(), dto.getState(), "DTO should contain the repair order state");
-        assertEquals(repairOrder.getProblemDescr(), dto.getProblemDescr(),
-                "DTO should contain the problem description");
+        assertEquals(order.getId(), dto.getId());
+        assertEquals(order.getState(), dto.getState());
+        assertEquals(order.getProblemDescr(), dto.getProblemDescr());
     }
 
     @Test
     void testGetRepairTasksReturnsCopy() {
-        repairOrder.addRepairTask("Byt kedja");
+        repairOrder.addRepairTask("Byt kedja", 350.0);
         repairOrder.getRepairTasks().clear();
-        assertEquals(1, repairOrder.getRepairTasks().size(),
-                "External clear() should not affect internal task list.");
+        assertEquals(1, repairOrder.getRepairTasks().size());
     }
 
     @Test
     void testCreateDTOContainsDiagnosticResultsAndRepairTasks() {
         repairOrder.addDiagnosticResult("Slitet batteri");
-        repairOrder.addRepairTask("Byt batteri");
+        repairOrder.addRepairTask("Byt batteri", 1500.0);
+
         RepairOrderDTO dto = repairOrder.createDTO();
-        assertTrue(dto.getDiagnosticResults().contains("Slitet batteri"),
-                "DTO should contain added diagnostic results.");
-        assertEquals(1, dto.getRepairTasks().size(),
-                "DTO should contain added repair tasks.");
-        assertEquals("Byt batteri", dto.getRepairTasks().get(0).getDescription(),
-                "DTO repair task should preserve description.");
+
+        assertTrue(dto.getDiagnosticResults().contains("Slitet batteri"));
+        assertEquals(1, dto.getRepairTasks().size());
+        assertEquals("Byt batteri", dto.getRepairTasks().get(0).getDescription());
     }
 }
