@@ -12,6 +12,8 @@ import se.kth.iv1350.electricBike.integration.RepairTaskDTO;
  * bike details, and the current status of the repair process.
  */
 public class RepairOrder {
+    private List<RepairOrderObserver> observers = new ArrayList<>();
+
     private String id;
     private String problemDescr;
     private String customerPhone;
@@ -39,6 +41,16 @@ public class RepairOrder {
         this.state = "Newly created";
         this.diagnosticReport = new DiagnosticReport();
         this.repairTasks = new ArrayList<>();
+    }
+
+    public void addObserver(RepairOrderObserver obs) {
+        observers.add(obs);
+    }
+
+    private void notifyObservers() {
+        for (RepairOrderObserver obs : observers) {
+            obs.repairOrderUpdated(this.createDTO());
+        }
     }
 
     /**
@@ -106,6 +118,7 @@ public class RepairOrder {
      */
     public void addDiagnosticResult(String result) {
         this.diagnosticReport.addResult(result);
+        notifyObservers();
     }
 
     /**
@@ -115,6 +128,7 @@ public class RepairOrder {
      */
     public void addRepairTask(String description) {
         this.repairTasks.add(new RepairTask(description));
+        notifyObservers();
     }
 
     /**
@@ -123,6 +137,7 @@ public class RepairOrder {
      */
     public void acceptRepairOrder() {
         this.state = "Accepted";
+        notifyObservers();
     }
 
     /**
