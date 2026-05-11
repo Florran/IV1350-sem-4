@@ -1,7 +1,6 @@
 package se.kth.iv1350.electricBike.view;
 
 import java.io.IOException;
-import java.util.List;
 import se.kth.iv1350.electricBike.controller.Controller;
 import se.kth.iv1350.electricBike.integration.CustomerDTO;
 import se.kth.iv1350.electricBike.integration.CustomerNotFoundException;
@@ -56,45 +55,28 @@ public class View {
         contr.createRepairOrder(problemDescription, customerPhone, bikeSerial);
         System.out.println("Systemet har skapat reparationsorder.");
 
+        String orderId = contr.findRepairOrderByNumber(customerPhone).getId();
+
         System.out.println("\n--- Tekniker börjar arbeta ---");
-        System.out.println("Tekniker hämtar alla pågående reparationsordrar...");
-        List<RepairOrderDTO> allOrders = contr.findAllRepairOrders();
-        System.out.println("Antal ordrar i systemet: " + allOrders.size());
-
-        for (RepairOrderDTO order : allOrders) {
-            System.out.println(order);
-        }
-
-        RepairOrderDTO orderToWorkOn = allOrders.get(0);
-        String generatedOrderId = orderToWorkOn.getId();
-
-        System.out.println("\nTekniker väljer order " + generatedOrderId + " och inspekterar cykeln...");
-        contr.addDiagnosticResult(generatedOrderId, "Kabelglapp vid motorns anslutning");
-        contr.addDiagnosticResult(generatedOrderId, "Slitet batterifäste");
-        System.out.println("Diagnostiska resultat har sparats i ordern.");
+        System.out.println("Tekniker inspekterar cykeln och registrerar diagnostiska fynd...");
+        contr.addDiagnosticResult(orderId, "Kabelglapp vid motorns anslutning");
+        contr.addDiagnosticResult(orderId, "Slitet batterifäste");
 
         System.out.println("\nTekniker föreslår reparationer...");
-        contr.addRepairTask(generatedOrderId, "Byt ut och löd om motorkabel", 450.0);
-        contr.addRepairTask(generatedOrderId, "Montera nytt batterifäste", 200.0);
-        System.out.println("Reparationsuppgifter har sparats i ordern.");
+        contr.addRepairTask(orderId, "Byt ut och löd om motorkabel", 450.0);
+        contr.addRepairTask(orderId, "Montera nytt batterifäste", 200.0);
 
         System.out.println("\n--- Kunden kommer tillbaka för att hämta cykeln ---");
-        System.out.println("Receptionist söker fram ordern via telefonnummer " + customerPhone + "...");
-        RepairOrderDTO foundOrder = contr.findRepairOrderByNumber(customerPhone);
+        System.out.println("Receptionist har redan informerats om uppdaterad order via RepairOrderView.");
 
-        if (foundOrder != null) {
-            System.out.println("Hittad order:");
-            System.out.println(foundOrder);
+        System.out.println("\nApplicerar rabatt (LoyaltyDiscount)...");
+        DiscountStrategy loyaltyDiscount = new LoyaltyDiscount();
+        double finalPrice = contr.calculateTotalCost(orderId, loyaltyDiscount);
+        System.out.println("Totalkostnad efter rabatt: " + finalPrice + " kr");
 
-            System.out.println("\nApplicerar rabatt (LoyaltyDiscount)...");
-            DiscountStrategy loyaltyDiscount = new LoyaltyDiscount();
-            double finalPrice = contr.calculateTotalCost(generatedOrderId, loyaltyDiscount);
-            System.out.println("Totalkostnad efter rabatt: " + finalPrice + " kr");
-
-            System.out.println("\nKunden accepterar reparationen.");
-            System.out.println("\n--- Skrivare skriver ut kvitto ---");
-            contr.acceptRepairOrder(generatedOrderId);
-        }
+        System.out.println("\nKunden accepterar reparationen.");
+        System.out.println("\n--- Skrivare skriver ut kvitto ---");
+        contr.acceptRepairOrder(orderId);
 
         System.out.println("\n--- Demonstration av felhantering (sökning på okänt ID) ---");
         String fakeId = "finns-inte-id";
