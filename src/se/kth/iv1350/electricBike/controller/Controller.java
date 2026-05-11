@@ -1,28 +1,25 @@
 package se.kth.iv1350.electricBike.controller;
 
-import java.util.ArrayList;
 import java.util.List;
-import se.kth.iv1350.electricBike.integration.CustomerDTO;
-import se.kth.iv1350.electricBike.integration.CustomerRegistry;
-import se.kth.iv1350.electricBike.integration.Printer;
-import se.kth.iv1350.electricBike.integration.RepairOrderDTO;
-import se.kth.iv1350.electricBike.integration.RepairOrderRegistry;
+
+import se.kth.iv1350.electricBike.integration.*;
 import se.kth.iv1350.electricBike.model.RepairOrder;
+import se.kth.iv1350.electricBike.model.discount.DiscountStrategy;
 
 /**
  * Coordinates calls between the view, model, and integration layers.
  */
 public class Controller {
-
     private CustomerRegistry customerReg;
     private RepairOrderRegistry repairOrderReg;
     private Printer printer;
 
     /**
-     * The controller constructor
-     * @param customerReg CustomerRegistry reference so controller can make calls to CustomerRegistry
-     * @param repairOrderReg RepairOrderRegistry reference used to store repair orders
-     * @param printer Printer reference used to print accepted repair orders
+     * Creates a new instance.
+     * * @param customerReg The customer registry.
+     * 
+     * @param repairOrderReg The repair order registry.
+     * @param printer        The printer.
      */
     public Controller(CustomerRegistry customerReg, RepairOrderRegistry repairOrderReg, Printer printer) {
         this.customerReg = customerReg;
@@ -31,104 +28,106 @@ public class Controller {
     }
 
     /**
-     * Tries to find a customer based on a specified phone number
+     * Searches for a customer by phone number.
+     * * @param phoneNumber The phone number to search for.
      * 
-     * @param phoneNumber The phone number used to search for the customer
-     * @return Returns the found customer, or null if no matching customer exists
+     * @return The found customer, or null.
+     * @throws CustomerNotFoundException if no customer matches the given phone
+     *                                   number.
      */
-    public CustomerDTO findCustomer(String phoneNumber) {
-        CustomerDTO foundCustomer = customerReg.findCustomer(phoneNumber);
-        return foundCustomer;
+    public CustomerDTO findCustomer(String phoneNumber) throws CustomerNotFoundException {
+        return customerReg.findCustomer(phoneNumber);
     }
 
     /**
-     * Creates a new repair order and saves it to the system.
+     * Creates a new repair order and saves it to the registry as a DTO.
+     * * @param problemDescr Description of the problem.
      * 
-     * @param problemDescr  The description of the problem
-     * @param customerPhone The customer's phone number
-     * @param bikeSerialNo  The serial number of the bike
+     * @param customerPhone Customer's phone number.
+     * @param bikeSerialNo  Bike's serial number.
      */
     public void createRepairOrder(String problemDescr, String customerPhone, String bikeSerialNo) {
         RepairOrder newOrder = new RepairOrder(problemDescr, customerPhone, bikeSerialNo);
-        repairOrderReg.createRepairOrder(newOrder);
+        repairOrderReg.createRepairOrder(newOrder.createDTO());
     }
 
     /**
-     * Finds all repair orders in the system.
-     * @return A list of DTOs representing all repair orders.
+     * Returns all repair orders.
+     * * @return A list of all repair order DTOs.
      */
     public List<RepairOrderDTO> findAllRepairOrders() {
-        List<RepairOrder> orders = repairOrderReg.findAllRepairOrders();
-        List<RepairOrderDTO> dtos = new ArrayList<>();
-
-        for (RepairOrder order : orders) {
-            dtos.add(order.createDTO());
-        }
-        return dtos;
+        return repairOrderReg.findAllRepairOrders();
     }
 
     /**
-     * Tries to find a repair order based on its unique ID.
-     *
-     * @param orderId The unique ID of the order
-     * @return The found RepairOrderDTO, or null if not found
+     * Finds a repair order by its ID.
+     * * @param orderId The order ID.
+     * 
+     * @return The found DTO, or null.
      */
     public RepairOrderDTO findRepairOrderById(String orderId) {
-        RepairOrder order = repairOrderReg.findRepairOrderById(orderId);
-        if (order != null) {
-            return order.createDTO();
-        }
-        return null;
+        return repairOrderReg.findRepairOrderById(orderId);
     }
 
     /**
-     * Tries to find an active repair order for a specific customer.
-     *
-     * @param phoneNumber The phone number to search for
-     * @return The found RepairOrderDTO, or null if no order was found
+     * Finds a repair order by customer phone number.
+     * * @param phoneNumber The phone number.
+     * 
+     * @return The found DTO, or null.
      */
     public RepairOrderDTO findRepairOrderByNumber(String phoneNumber) {
-        RepairOrder order = repairOrderReg.findRepairOrderByNumber(phoneNumber);
-
-        if (order != null) {
-            return order.createDTO();
-        }
-        return null;
+        return repairOrderReg.findRepairOrderByNumber(phoneNumber);
     }
 
     /**
-     * Adds a new finding from the technician's inspection to a specific repair
-     * order.
-     *
-     * @param repairOrderId  The unique identifier of the repair order.
-     * @param diagTaskResult The description of the diagnostic finding.
+     * Adds a diagnostic result to an order.
+     * * @param repairOrderId The order ID.
+     * 
+     * @param diagTaskResult The result to add.
      */
     public void addDiagnosticResult(String repairOrderId, String diagTaskResult) {
-        RepairOrder repairOrder = repairOrderReg.findRepairOrderById(repairOrderId);
+        RepairOrderDTO dto = repairOrderReg.findRepairOrderById(repairOrderId);
+        RepairOrder repairOrder = new RepairOrder(dto);
         repairOrder.addDiagnosticResult(diagTaskResult);
+        repairOrderReg.updateRepairOrder(repairOrder.createDTO());
     }
 
     /**
-     * Adds a proposed repair task to a specific repair order.
-     *
-     * @param repairOrderId  The unique identifier of the repair order.
-     * @param repairTaskDesc The description of the repair task to be added.
+     * Adds a repair task with a specific cost to an order.
+     * * @param repairOrderId The order ID.
+     * 
+     * @param repairTaskDesc The task description.
+     * @param cost           The cost of the task.
      */
-    public void addRepairTask(String repairOrderId, String repairTaskDesc) {
-        RepairOrder repairOrder = repairOrderReg.findRepairOrderById(repairOrderId);
-        repairOrder.addRepairTask(repairTaskDesc);
+    public void addRepairTask(String repairOrderId, String repairTaskDesc, double cost) {
+        RepairOrderDTO dto = repairOrderReg.findRepairOrderById(repairOrderId);
+        RepairOrder repairOrder = new RepairOrder(dto);
+        repairOrder.addRepairTask(repairTaskDesc, cost);
+        repairOrderReg.updateRepairOrder(repairOrder.createDTO());
     }
 
     /**
-     * Marks a specific repair order as accepted by the customer.
-     *
-     * @param repairOrderId The unique identifier of the repair order.
+     * Calculates the total cost of an order applying a discount strategy.
+     * * @param repairOrderId The order ID.
+     * 
+     * @param discountStrategy The strategy to use.
+     * @return The final cost.
+     */
+    public double calculateTotalCost(String repairOrderId, DiscountStrategy discountStrategy) {
+        RepairOrderDTO dto = repairOrderReg.findRepairOrderById(repairOrderId);
+        return discountStrategy.applyDiscount(dto.getTotalCost());
+    }
+
+    /**
+     * Accepts the order and prints the receipt.
+     * * @param repairOrderId The order ID.
      */
     public void acceptRepairOrder(String repairOrderId) {
-        RepairOrder repairOrder = repairOrderReg.findRepairOrderById(repairOrderId);
+        RepairOrderDTO dto = repairOrderReg.findRepairOrderById(repairOrderId);
+        RepairOrder repairOrder = new RepairOrder(dto);
         repairOrder.acceptRepairOrder();
-        repairOrderReg.updateRepairOrder(repairOrder);
         RepairOrderDTO repairOrderToPrint = repairOrder.createDTO();
+        repairOrderReg.updateRepairOrder(repairOrderToPrint);
         printer.printRepairOrder(repairOrderToPrint);
     }
 }

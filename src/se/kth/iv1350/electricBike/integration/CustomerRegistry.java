@@ -6,11 +6,13 @@ package se.kth.iv1350.electricBike.integration;
 public class CustomerRegistry {
 
     /**
-     * Tries to find a customer based on a specified phone number, this would go in and ask a DB or equal but that is scoped out for the assignment. For now the values are hardcoded
-     * @param phoneNumber The phone number used to search for the customer
-     * @return Returns the found customer, or null if no matching customer exists
+     * Tries to find a customer based on a specified phone number, this would go in and ask a DB or equal but that is scoped out for the assignment. For now the values are hardcoded.
+     *
+     * @param phoneNumber The phone number used to search for the customer.
+     * @return The found customer.
+     * @throws CustomerNotFoundException if no customer matches the given phone number.
      */
-    public CustomerDTO findCustomer(String phoneNumber) {
+    public CustomerDTO findCustomer(String phoneNumber) throws CustomerNotFoundException {
         if (phoneNumber.equals("0705556767")) {
             return new CustomerDTO(
                 "Customer1",
@@ -21,6 +23,6 @@ public class CustomerRegistry {
                 "Lambo"
             );
         }
-        return null;
+        throw new CustomerNotFoundException(phoneNumber);
     }
 }

@@ -10,6 +10,9 @@ import se.kth.iv1350.electricBike.integration.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Contains tests for the Controller class.
+ */
 public class ControllerTest {
     private Controller contr;
     private final PrintStream originalOut = System.out;
@@ -38,28 +41,50 @@ public class ControllerTest {
     }
 
     @Test
-    public void testFindExistingCustomer() {
+    public void testFindExistingCustomer() throws CustomerNotFoundException {
         String phone = "0705556767";
         CustomerDTO result = this.contr.findCustomer(phone);
-        assertNotNull(result, "Existing customer was not found");
-        assertEquals(phone, result.getPhoneNumber(), "Wrong phone number");
-        assertEquals("Customer1", result.getName(), "Wrong name.");
+        assertNotNull(result);
+        assertEquals(phone, result.getPhoneNumber());
+        assertEquals("Customer1", result.getName());
     }
 
     @Test
-    public void testFindUnknownCustomerReturnsNull() {
+    public void testFindUnknownCustomerThrowsException() {
         String phone = "0700000000";
-        CustomerDTO result = this.contr.findCustomer(phone);
-
-        assertNull(result, "invalid phone number should return null");
+        try {
+            this.contr.findCustomer(phone);
+            fail();
+        } catch (CustomerNotFoundException exc) {
+            assertTrue(exc.getMessage().contains(phone));
+            assertEquals(phone, exc.getNumber());
+        }
     }
 
     @Test
-    public void testFindCustomerEmptyPhoneNrReturnsNull() {
+    public void testFindCustomerEmptyPhoneNrThrowsException() {
         String phone = "";
-        CustomerDTO result = this.contr.findCustomer(phone);
+        try {
+            this.contr.findCustomer(phone);
+            fail();
+        } catch (CustomerNotFoundException exc) {
+            assertEquals(phone, exc.getNumber());
+        }
+    }
 
-        assertNull(result, "no phone number should return null");
+    @Test
+    public void testFailedLookupDoesNotAffectSubsequentLookup() {
+        try {
+            this.contr.findCustomer("0700000000");
+            fail();
+        } catch (CustomerNotFoundException exc) {
+        }
+        try {
+            CustomerDTO result = this.contr.findCustomer("0705556767");
+            assertNotNull(result);
+        } catch (CustomerNotFoundException exc) {
+            fail();
+        }
     }
 
     @Test
@@ -69,8 +94,7 @@ public class ControllerTest {
         contr.addDiagnosticResult(savedOrderId, "Sensor trasig");
 
         RepairOrderDTO dto = contr.findRepairOrderById(savedOrderId);
-        assertTrue(dto.getDiagnosticResults().contains("Sensor trasig"),
-                "Diagnostic result should be stored on the order.");
+        assertTrue(dto.getDiagnosticResults().contains("Sensor trasig"));
     }
 
     @Test
@@ -82,22 +106,20 @@ public class ControllerTest {
 
         RepairOrderDTO dto = contr.findRepairOrderById(savedOrderId);
         assertTrue(dto.getDiagnosticResults().contains("Sensor trasig") &&
-                dto.getDiagnosticResults().contains("Slitna bromsbelägg"),
-                "Multiple diagnostic results should be stored on the order.");
-        assertEquals(2, dto.getDiagnosticResults().size(),
-                "The order should contain exactly two diagnostic results.");
+                dto.getDiagnosticResults().contains("Slitna bromsbelägg"));
+        assertEquals(2, dto.getDiagnosticResults().size());
     }
 
     @Test
     void testAddRepairTaskViaController() {
         String savedOrderId = createOrderAndGetId();
 
-        contr.addRepairTask(savedOrderId, "Byt kedja");
+        contr.addRepairTask(savedOrderId, "Byt kedja", 350.0);
 
         RepairOrderDTO dto = contr.findRepairOrderById(savedOrderId);
         boolean found = dto.getRepairTasks().stream()
                 .anyMatch(t -> t.getDescription().equals("Byt kedja"));
-        assertTrue(found, "Repair task should be stored on the order.");
+        assertTrue(found);
     }
 
     @Test
@@ -107,29 +129,28 @@ public class ControllerTest {
         contr.acceptRepairOrder(savedOrderId);
 
         RepairOrderDTO acceptedOrder = contr.findRepairOrderById(savedOrderId);
-        assertEquals("Accepted", acceptedOrder.getState(),
-                "Orderstatus borde vara 'Accepted' efter att controllern anropats.");
+        assertEquals("Accepted", acceptedOrder.getState());
     }
 
     @Test
     public void testFindRepairOrderByNumberUnknownPhoneReturnsNull() {
         RepairOrderDTO result = contr.findRepairOrderByNumber("0700000000");
 
-        assertNull(result, "Unknown phone number should return null.");
+        assertNull(result);
     }
 
     @Test
     public void testFindRepairOrderByNumberOnEmptyRegistryReturnsNull() {
         RepairOrderDTO result = contr.findRepairOrderByNumber("0701112233");
 
-        assertNull(result, "Lookup in empty registry should return null.");
+        assertNull(result);
     }
 
     @Test
     public void testFindAllRepairOrdersReturnsEmptyListWhenNoOrdersExist() {
         List<RepairOrderDTO> result = this.contr.findAllRepairOrders();
 
-        assertTrue(result.isEmpty(), "Repair order list should be empty before any order has been created");
+        assertTrue(result.isEmpty());
     }
 
     @Test
@@ -141,7 +162,7 @@ public class ControllerTest {
         this.contr.createRepairOrder(problemDescr, customerPhone, bikeSerialNo);
         List<RepairOrderDTO> result = this.contr.findAllRepairOrders();
 
-        assertEquals(1, result.size(), "One repair order should have been created");
+        assertEquals(1, result.size());
     }
 
     @Test
@@ -151,9 +172,8 @@ public class ControllerTest {
 
         List<RepairOrderDTO> result = this.contr.findAllRepairOrders();
 
-        assertEquals(2, result.size(), "All stored repair orders should be returned as DTOs");
-        assertNotEquals(result.get(0).getId(), result.get(1).getId(),
-                "Each stored repair order should be represented by a separate DTO with its own id");
+        assertEquals(2, result.size());
+        assertNotEquals(result.get(0).getId(), result.get(1).getId());
     }
 
     @Test
@@ -165,10 +185,9 @@ public class ControllerTest {
         this.contr.createRepairOrder(problemDescr, customerPhone, bikeSerialNo);
         RepairOrderDTO result = this.contr.findAllRepairOrders().get(0);
 
-        assertNotNull(result.getId(), "Created repair order should have an id");
-        assertFalse(result.getId().trim().isEmpty(), "Created repair order id should not be blank");
-        assertEquals("Newly created", result.getState(), "Created repair order should have initial state");
-        assertEquals(problemDescr, result.getProblemDescr(),
-                "Created repair order should keep the problem description");
+        assertNotNull(result.getId());
+        assertFalse(result.getId().trim().isEmpty());
+        assertEquals("Newly created", result.getState());
+        assertEquals(problemDescr, result.getProblemDescr());
     }
 }
