@@ -22,10 +22,10 @@ public class ControllerTest {
         System.setOut(new PrintStream(new ByteArrayOutputStream()));
 
         CustomerRegistry customerReg = new CustomerRegistry();
-        RepairOrderRegistry repairOrderReg = new RepairOrderRegistry();
+        RepairOrderRegistry.getInstance().clearAll();
         Printer printer = new Printer();
 
-        this.contr = new Controller(customerReg, repairOrderReg, printer);
+        this.contr = new Controller(customerReg, printer);
     }
 
     @AfterEach

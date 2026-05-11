@@ -17,12 +17,46 @@ public class RepairOrderRegistryTest {
 
     @BeforeEach
     public void setUp() {
-        this.repairOrderReg = new RepairOrderRegistry();
+        this.repairOrderReg = RepairOrderRegistry.getInstance();
+        this.repairOrderReg.clearAll();
     }
 
     @AfterEach
     public void tearDown() {
+        this.repairOrderReg.clearAll();
         this.repairOrderReg = null;
+    }
+
+    @Test
+    public void testGetInstanceReturnsSameInstance() {
+        RepairOrderRegistry first = RepairOrderRegistry.getInstance();
+        RepairOrderRegistry second = RepairOrderRegistry.getInstance();
+        assertSame(first, second);
+    }
+
+    @Test
+    public void testFindByDbFailureTriggerIdThrowsDatabaseFailureException() {
+        try {
+            repairOrderReg.findRepairOrderById(RepairOrderRegistry.DB_FAILURE_TRIGGER_ID);
+            fail("Expected DatabaseFailureException");
+        } catch (DatabaseFailureException exc) {
+            assertEquals(RepairOrderRegistry.DB_FAILURE_TRIGGER_ID, exc.getItemId());
+            assertTrue(exc.getMessage().contains(RepairOrderRegistry.DB_FAILURE_TRIGGER_ID));
+        }
+    }
+
+    @Test
+    public void testFailedLookupDoesNotChangeRegistryState() {
+        RepairOrder order = new RepairOrder("Punktering", "0700000002", "SN002");
+        repairOrderReg.createRepairOrder(order.createDTO());
+
+        try {
+            repairOrderReg.findRepairOrderById(RepairOrderRegistry.DB_FAILURE_TRIGGER_ID);
+            fail("Expected DatabaseFailureException");
+        } catch (DatabaseFailureException exc) {
+        }
+
+        assertEquals(1, repairOrderReg.findAllRepairOrders().size());
     }
 
     @Test
