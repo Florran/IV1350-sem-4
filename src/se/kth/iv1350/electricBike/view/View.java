@@ -76,7 +76,7 @@ public class View {
 
         System.out.println("\nKunden accepterar reparationen.");
         System.out.println("\n--- Skrivare skriver ut kvitto ---");
-        contr.acceptRepairOrder(orderId);
+        contr.acceptRepairOrder(orderId, loyaltyDiscount);
 
         System.out.println("\n--- Demonstration av felhantering (sökning på okänt ID) ---");
         String fakeId = "finns-inte-id";
