@@ -13,6 +13,7 @@ public class RepairOrderView implements RepairOrderObserver {
      *
      * @param order A snapshot of the repair order after the update.
      */
+    @Override
     public void repairOrderUpdated(RepairOrderDTO order) {
         System.out.println(order);
     }

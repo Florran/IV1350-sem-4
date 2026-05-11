@@ -1,5 +1,6 @@
 package se.kth.iv1350.electricBike.view;
 
+import java.io.IOException;
 import java.util.List;
 import se.kth.iv1350.electricBike.controller.Controller;
 import se.kth.iv1350.electricBike.integration.CustomerDTO;
@@ -20,8 +21,10 @@ public class View {
      *
      * @param contr Controller reference so view can make calls to controller.
      */
-    public View(Controller contr) {
+    public View(Controller contr) throws IOException {
         this.contr = contr;
+        contr.addRepairOrderObserver(new RepairOrderView());
+        contr.addRepairOrderObserver(new RepairOrderLogger());
     }
 
     /**

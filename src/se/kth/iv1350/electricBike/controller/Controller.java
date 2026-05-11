@@ -1,9 +1,11 @@
 package se.kth.iv1350.electricBike.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import se.kth.iv1350.electricBike.integration.*;
 import se.kth.iv1350.electricBike.model.RepairOrder;
+import se.kth.iv1350.electricBike.model.RepairOrderObserver;
 import se.kth.iv1350.electricBike.model.discount.DiscountStrategy;
 
 /**
@@ -13,6 +15,8 @@ public class Controller {
     private CustomerRegistry customerReg;
     private RepairOrderRegistry repairOrderReg;
     private Printer printer;
+
+    private List<RepairOrderObserver> repairOrderObservers = new ArrayList<>();
 
     /**
      * Creates a new instance.
@@ -25,6 +29,21 @@ public class Controller {
         this.customerReg = customerReg;
         this.repairOrderReg = repairOrderReg;
         this.printer = printer;
+    }
+
+    /**
+     * Adds an observer that will be notified when any repair order is updated.
+     *
+     * @param obs The observer to add.
+     */
+    public void addRepairOrderObserver(RepairOrderObserver obs) {
+        this.repairOrderObservers.add(obs);
+    }
+
+    private void attachObservers(RepairOrder repairOrder) {
+        for (RepairOrderObserver obs : this.repairOrderObservers) {
+            repairOrder.addObserver(obs);
+        }
     }
 
     /**
@@ -88,6 +107,7 @@ public class Controller {
     public void addDiagnosticResult(String repairOrderId, String diagTaskResult) {
         RepairOrderDTO dto = repairOrderReg.findRepairOrderById(repairOrderId);
         RepairOrder repairOrder = new RepairOrder(dto);
+        attachObservers(repairOrder);
         repairOrder.addDiagnosticResult(diagTaskResult);
         repairOrderReg.updateRepairOrder(repairOrder.createDTO());
     }
@@ -102,6 +122,7 @@ public class Controller {
     public void addRepairTask(String repairOrderId, String repairTaskDesc, double cost) {
         RepairOrderDTO dto = repairOrderReg.findRepairOrderById(repairOrderId);
         RepairOrder repairOrder = new RepairOrder(dto);
+        attachObservers(repairOrder);
         repairOrder.addRepairTask(repairTaskDesc, cost);
         repairOrderReg.updateRepairOrder(repairOrder.createDTO());
     }
@@ -125,6 +146,7 @@ public class Controller {
     public void acceptRepairOrder(String repairOrderId) {
         RepairOrderDTO dto = repairOrderReg.findRepairOrderById(repairOrderId);
         RepairOrder repairOrder = new RepairOrder(dto);
+        attachObservers(repairOrder);
         repairOrder.acceptRepairOrder();
         RepairOrderDTO repairOrderToPrint = repairOrder.createDTO();
         repairOrderReg.updateRepairOrder(repairOrderToPrint);
