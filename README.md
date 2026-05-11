@@ -1,4 +1,4 @@
-# IV1350-sem3
+# IV1350-sem-4
 Sem3 IV1350
 
 Group members:
