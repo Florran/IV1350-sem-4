@@ -90,7 +90,7 @@ public class View {
 
             System.out.println("\nKunden accepterar reparationen.");
             System.out.println("\n--- Skrivare skriver ut kvitto ---");
-            contr.acceptRepairOrder(generatedOrderId);
+            contr.acceptRepairOrder(generatedOrderId, loyaltyDiscount);
         }
 
         System.out.println("\n--- Demonstration av felhantering (sökning på okänt ID) ---");

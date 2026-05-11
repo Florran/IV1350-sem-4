@@ -18,7 +18,7 @@ public class RepairOrderDTOTest {
                                 "abc12", "Newly created", "Battery dead",
                                 "0701112233", "SN001",
                                 "2026-04-30T10:00", "2026-05-07T10:00",
-                                0.0, new ArrayList<String>(), new ArrayList<RepairTaskDTO>());
+                                0.0, 0.0, new ArrayList<String>(), new ArrayList<RepairTaskDTO>());
 
                 String result = dto.toString();
 
@@ -36,7 +36,7 @@ public class RepairOrderDTOTest {
                                 "abc12", "Newly created", "Battery dead",
                                 "0701112233", "SN001",
                                 "2026-04-30T10:00", "2026-05-07T10:00",
-                                0.0, diagnostics, new ArrayList<RepairTaskDTO>());
+                                0.0, 0.0, diagnostics, new ArrayList<RepairTaskDTO>());
 
                 String result = dto.toString();
 
@@ -50,7 +50,7 @@ public class RepairOrderDTOTest {
                                 "abc12", "Newly created", "Battery dead",
                                 "0701112233", "SN001",
                                 "2026-04-30T10:00", "2026-05-07T10:00",
-                                0.0, new ArrayList<String>(), new ArrayList<RepairTaskDTO>());
+                                0.0, 0.0, new ArrayList<String>(), new ArrayList<RepairTaskDTO>());
 
                 String result = dto.toString();
 
@@ -59,8 +59,8 @@ public class RepairOrderDTOTest {
                 assertTrue(result.contains("Battery dead"));
                 assertTrue(result.contains("0701112233"));
                 assertTrue(result.contains("SN001"));
-                assertTrue(result.contains("2026-04-30T10:00"));
-                assertTrue(result.contains("2026-05-07T10:00"));
+                assertTrue(result.contains("2026-04-30 10:00"));
+                assertTrue(result.contains("2026-05-07 10:00"));
         }
 
         @Test
@@ -72,7 +72,7 @@ public class RepairOrderDTOTest {
                                 "abc12", "Newly created", "Battery dead",
                                 "0701112233", "SN001",
                                 "2026-04-30T10:00", "2026-05-07T10:00",
-                                0.0, input, new ArrayList<RepairTaskDTO>());
+                                0.0, 0.0, input, new ArrayList<RepairTaskDTO>());
 
                 input.add("Mutated after construction");
 
@@ -89,7 +89,7 @@ public class RepairOrderDTOTest {
                                 "abc12", "Newly created", "Battery dead",
                                 "0701112233", "SN001",
                                 "2026-04-30T10:00", "2026-05-07T10:00",
-                                0.0, new ArrayList<String>(), inputTasks);
+                                0.0, 0.0, new ArrayList<String>(), inputTasks);
 
                 RepairTask task2 = new RepairTask("Byt motor", 1500.0);
                 inputTasks.add(task2.createDTO());

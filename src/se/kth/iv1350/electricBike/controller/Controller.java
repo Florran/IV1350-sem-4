@@ -119,13 +119,15 @@ public class Controller {
     }
 
     /**
-     * Accepts the order and prints the receipt.
+     * Accepts the order, applies the final discount, and prints the receipt.
      * * @param repairOrderId The order ID.
+     * 
+     * @param discountStrategy The strategy to apply to the final order.
      */
-    public void acceptRepairOrder(String repairOrderId) {
+    public void acceptRepairOrder(String repairOrderId, DiscountStrategy discountStrategy) {
         RepairOrderDTO dto = repairOrderReg.findRepairOrderById(repairOrderId);
         RepairOrder repairOrder = new RepairOrder(dto);
-        repairOrder.acceptRepairOrder();
+        repairOrder.acceptRepairOrder(discountStrategy);
         RepairOrderDTO repairOrderToPrint = repairOrder.createDTO();
         repairOrderReg.updateRepairOrder(repairOrderToPrint);
         printer.printRepairOrder(repairOrderToPrint);

@@ -7,6 +7,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import se.kth.iv1350.electricBike.integration.*;
+import se.kth.iv1350.electricBike.model.discount.NoDiscount;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -126,7 +127,7 @@ public class ControllerTest {
     void testAcceptRepairOrderChangesStateViaController() {
         String savedOrderId = createOrderAndGetId();
 
-        contr.acceptRepairOrder(savedOrderId);
+        contr.acceptRepairOrder(savedOrderId, new NoDiscount());
 
         RepairOrderDTO acceptedOrder = contr.findRepairOrderById(savedOrderId);
         assertEquals("Accepted", acceptedOrder.getState());
