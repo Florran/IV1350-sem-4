@@ -1,69 +1,100 @@
-Order id:               b8d2e
-State:                  Newly created
-Customer phone:         0705556767
-Bike serial number:     0001
-Problem description:    Motor stängs av i uppförsbacke
-Created:                2026-05-11T12:15:00.871001900
-Estimated completion:   2026-05-18T12:15:00.871001900
-Diagnostic results:
+---------------------------------------
+REPAIR ORDER: 0cf38
+Date: 2026-05-12 10:12
+Estimated completion: 2026-05-19 10:12
+Status: Newly created
+Customer Phone: 0705556767
+Bike Serial: 0001
+Problem: Motor stängs av i uppförsbacke
+
+Diagnostic results: 
   - Kabelglapp vid motorns anslutning
+
 Repair tasks: (none)
-Total cost:             0.0 kr
 
-Order id:               b8d2e
-State:                  Newly created
-Customer phone:         0705556767
-Bike serial number:     0001
-Problem description:    Motor stängs av i uppförsbacke
-Created:                2026-05-11T12:15:00.871001900
-Estimated completion:   2026-05-18T12:15:00.871001900
-Diagnostic results:
+Subtotal: 0.0 kr
+Total to pay: 0.0 kr
+---------------------------------------
+
+---------------------------------------
+REPAIR ORDER: 0cf38
+Date: 2026-05-12 10:12
+Estimated completion: 2026-05-19 10:12
+Status: Newly created
+Customer Phone: 0705556767
+Bike Serial: 0001
+Problem: Motor stängs av i uppförsbacke
+
+Diagnostic results: 
   - Kabelglapp vid motorns anslutning
   - Slitet batterifäste
+
 Repair tasks: (none)
-Total cost:             0.0 kr
 
-Order id:               b8d2e
-State:                  Newly created
-Customer phone:         0705556767
-Bike serial number:     0001
-Problem description:    Motor stängs av i uppförsbacke
-Created:                2026-05-11T12:15:00.871001900
-Estimated completion:   2026-05-18T12:15:00.871001900
-Diagnostic results:
+Subtotal: 0.0 kr
+Total to pay: 0.0 kr
+---------------------------------------
+
+---------------------------------------
+REPAIR ORDER: 0cf38
+Date: 2026-05-12 10:12
+Estimated completion: 2026-05-19 10:12
+Status: Newly created
+Customer Phone: 0705556767
+Bike Serial: 0001
+Problem: Motor stängs av i uppförsbacke
+
+Diagnostic results: 
   - Kabelglapp vid motorns anslutning
   - Slitet batterifäste
-Repair tasks:
-  - Byt ut och löd om motorkabel - 450.0 kr (pending)
-Total cost:             450.0 kr
 
-Order id:               b8d2e
-State:                  Newly created
-Customer phone:         0705556767
-Bike serial number:     0001
-Problem description:    Motor stängs av i uppförsbacke
-Created:                2026-05-11T12:15:00.871001900
-Estimated completion:   2026-05-18T12:15:00.871001900
-Diagnostic results:
+Repair tasks: 
+  - Byt ut och löd om motorkabel (450.0 kr)
+
+Subtotal: 450.0 kr
+Total to pay: 450.0 kr
+---------------------------------------
+
+---------------------------------------
+REPAIR ORDER: 0cf38
+Date: 2026-05-12 10:12
+Estimated completion: 2026-05-19 10:12
+Status: Newly created
+Customer Phone: 0705556767
+Bike Serial: 0001
+Problem: Motor stängs av i uppförsbacke
+
+Diagnostic results: 
   - Kabelglapp vid motorns anslutning
   - Slitet batterifäste
-Repair tasks:
-  - Byt ut och löd om motorkabel - 450.0 kr (pending)
-  - Montera nytt batterifäste - 200.0 kr (pending)
-Total cost:             650.0 kr
 
-Order id:               b8d2e
-State:                  Accepted
-Customer phone:         0705556767
-Bike serial number:     0001
-Problem description:    Motor stängs av i uppförsbacke
-Created:                2026-05-11T12:15:00.871001900
-Estimated completion:   2026-05-18T12:15:00.871001900
-Diagnostic results:
+Repair tasks: 
+  - Byt ut och löd om motorkabel (450.0 kr)
+  - Montera nytt batterifäste (200.0 kr)
+
+Subtotal: 650.0 kr
+Total to pay: 650.0 kr
+---------------------------------------
+
+---------------------------------------
+REPAIR ORDER: 0cf38
+Date: 2026-05-12 10:12
+Estimated completion: 2026-05-19 10:12
+Status: Accepted
+Customer Phone: 0705556767
+Bike Serial: 0001
+Problem: Motor stängs av i uppförsbacke
+
+Diagnostic results: 
   - Kabelglapp vid motorns anslutning
   - Slitet batterifäste
-Repair tasks:
-  - Byt ut och löd om motorkabel - 450.0 kr (pending)
-  - Montera nytt batterifäste - 200.0 kr (pending)
-Total cost:             650.0 kr
+
+Repair tasks: 
+  - Byt ut och löd om motorkabel (450.0 kr)
+  - Montera nytt batterifäste (200.0 kr)
+
+Subtotal: 650.0 kr
+Discount applied: -97.5 kr
+Total to pay: 552.5 kr
+---------------------------------------
 

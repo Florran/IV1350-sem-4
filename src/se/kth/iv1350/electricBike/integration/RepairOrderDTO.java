@@ -2,14 +2,13 @@ package se.kth.iv1350.electricBike.integration;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
  * A Data Transfer Object representing the state of a repair order.
  * This object is immutable and carries data between layers.
  */
-public class RepairOrderDTO {
+public final class RepairOrderDTO {
     private final String id;
     private final String state;
     private final String problemDescr;
@@ -51,52 +50,107 @@ public class RepairOrderDTO {
         this.estimatedCompletionDate = estimatedCompletionDate;
         this.totalCost = totalCost;
         this.appliedDiscount = appliedDiscount;
-        this.diagnosticResults = new ArrayList<>(diagnosticResults);
-        this.repairTasks = new ArrayList<>(repairTasks);
+        this.diagnosticResults = List.copyOf(diagnosticResults);
+        this.repairTasks = List.copyOf(repairTasks);
     }
 
+    /**
+     * Gets the unique identifier for the order.
+     *
+     * @return The order ID.
+     */
     public String getId() {
         return id;
     }
 
+    /**
+     * Gets the current status of the order.
+     *
+     * @return The state of the order.
+     */
     public String getState() {
         return state;
     }
 
+    /**
+     * Gets the customer's problem description.
+     *
+     * @return The problem description.
+     */
     public String getProblemDescr() {
         return problemDescr;
     }
 
+    /**
+     * Gets the customer's phone number.
+     *
+     * @return The phone number.
+     */
     public String getCustomerPhone() {
         return customerPhone;
     }
 
+    /**
+     * Gets the serial number of the bike.
+     *
+     * @return The bike's serial number.
+     */
     public String getBikeSerialNo() {
         return bikeSerialNo;
     }
 
+    /**
+     * Gets the creation date of the order.
+     *
+     * @return The creation date as a string.
+     */
     public String getDate() {
         return date;
     }
 
+    /**
+     * Gets the estimated completion date.
+     *
+     * @return The estimated completion date as a string.
+     */
     public String getEstimatedCompletionDate() {
         return estimatedCompletionDate;
     }
 
+    /**
+     * Gets the total base cost of all tasks in the order.
+     *
+     * @return The total cost before any discounts.
+     */
     public double getTotalCost() {
         return totalCost;
     }
 
+    /**
+     * Gets the total discount amount applied to this order.
+     *
+     * @return The applied discount amount.
+     */
     public double getAppliedDiscount() {
         return appliedDiscount;
     }
 
+    /**
+     * Gets the diagnostic results associated with the order.
+     *
+     * @return An unmodifiable list of diagnostic results.
+     */
     public List<String> getDiagnosticResults() {
-        return new ArrayList<>(diagnosticResults);
+        return diagnosticResults;
     }
 
+    /**
+     * Gets the repair tasks associated with the order.
+     *
+     * @return An unmodifiable list of repair tasks.
+     */
     public List<RepairTaskDTO> getRepairTasks() {
-        return new ArrayList<>(repairTasks);
+        return repairTasks;
     }
 
     /**

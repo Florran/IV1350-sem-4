@@ -67,10 +67,18 @@ public class RepairOrder {
         }
     }
 
+    /**
+     * Adds an observer to be notified when the repair order is updated.
+     *
+     * @param obs The observer to add.
+     */
     public void addObserver(RepairOrderObserver obs) {
         observers.add(obs);
     }
 
+    /**
+     * Notifies all registered observers that the order has been updated.
+     */
     private void notifyObservers() {
         RepairOrderDTO dto = createDTO();
         for (RepairOrderObserver obs : observers) {
@@ -78,6 +86,11 @@ public class RepairOrder {
         }
     }
 
+    /**
+     * Calculates the total cost of all repair tasks in this order.
+     *
+     * @return The total cost.
+     */
     public double getTotalCost() {
         double total = 0;
         for (RepairTask task : repairTasks) {
@@ -86,30 +99,65 @@ public class RepairOrder {
         return total;
     }
 
+    /**
+     * Gets the unique identifier for this repair order.
+     *
+     * @return The repair order ID.
+     */
     public String getId() {
         return id;
     }
 
+    /**
+     * Gets the customer's description of the problem.
+     *
+     * @return The problem description.
+     */
     public String getProblemDescr() {
         return problemDescr;
     }
 
+    /**
+     * Gets the current state of the repair order.
+     *
+     * @return The state of the order.
+     */
     public String getState() {
         return state;
     }
 
+    /**
+     * Gets the phone number of the customer who owns the bike.
+     *
+     * @return The customer's phone number.
+     */
     public String getCustomerPhone() {
         return customerPhone;
     }
 
+    /**
+     * Gets the serial number of the bike being repaired.
+     *
+     * @return The bike's serial number.
+     */
     public String getBikeSerialNo() {
         return bikeSerialNo;
     }
 
+    /**
+     * Gets the date and time when the repair order was created.
+     *
+     * @return The creation date and time.
+     */
     public LocalDateTime getDate() {
         return date;
     }
 
+    /**
+     * Gets the estimated completion date and time for this repair.
+     *
+     * @return The estimated completion date and time.
+     */
     public LocalDateTime getEstimatedCompletionDate() {
         return estimatedCompletionDate;
     }
@@ -140,11 +188,22 @@ public class RepairOrder {
                 taskDTOs);
     }
 
+    /**
+     * Adds a new finding to this repair order's diagnostic report.
+     *
+     * @param result A description of the diagnostic finding.
+     */
     public void addDiagnosticResult(String result) {
         this.diagnosticReport.addResult(result);
         notifyObservers();
     }
 
+    /**
+     * Adds a proposed repair task to this repair order, including its cost.
+     *
+     * @param description A description of the work that needs to be done.
+     * @param cost        The cost of this specific repair task.
+     */
     public void addRepairTask(String description, double cost) {
         this.repairTasks.add(new RepairTask(description, cost));
         notifyObservers();
@@ -152,7 +211,8 @@ public class RepairOrder {
 
     /**
      * Updates the state of this repair order and locks in the applied discount.
-     * * @param discountStrategy The strategy used to calculate the final discount.
+     *
+     * @param discountStrategy The strategy used to calculate the final discount.
      */
     public void acceptRepairOrder(DiscountStrategy discountStrategy) {
         this.state = "Accepted";
@@ -161,10 +221,20 @@ public class RepairOrder {
         notifyObservers();
     }
 
+    /**
+     * Gets the diagnostic report for this repair order.
+     *
+     * @return The diagnostic report.
+     */
     public DiagnosticReport getDiagnosticReport() {
         return this.diagnosticReport;
     }
 
+    /**
+     * Gets the proposed repair tasks for this repair order.
+     *
+     * @return A list of the proposed repair tasks.
+     */
     public List<RepairTask> getRepairTasks() {
         return new ArrayList<>(this.repairTasks);
     }

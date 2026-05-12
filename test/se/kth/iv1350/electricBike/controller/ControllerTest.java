@@ -69,8 +69,9 @@ public class ControllerTest {
         this.contr.addRepairOrderObserver(obs);
         contr.acceptRepairOrder(savedOrderId, new NoDiscount());
 
-        assertEquals(1, obs.getCallCount());
-        assertEquals("Accepted", obs.getRepairOrderDTO().getState());
+        assertEquals(1, obs.getCallCount(), "Observer should only be called once per RepairOrder update");
+        assertEquals("Accepted", obs.getRepairOrderDTO().getState(),
+                "The updated values should get forwarded to the observer");
     }
 
     @Test
@@ -84,11 +85,13 @@ public class ControllerTest {
 
         contr.acceptRepairOrder(savedOrderId, new NoDiscount());
 
-        assertEquals(1, obsA.getCallCount());
-        assertEquals("Accepted", obsA.getRepairOrderDTO().getState());
+        assertEquals(1, obsA.getCallCount(), "Observer should only be called once per RepairOrder update");
+        assertEquals("Accepted", obsA.getRepairOrderDTO().getState(),
+                "The updated values should get forwarded to the observer");
 
-        assertEquals(1, obsB.getCallCount());
-        assertEquals("Accepted", obsB.getRepairOrderDTO().getState());
+        assertEquals(1, obsB.getCallCount(), "Observer should only be called once per RepairOrder update");
+        assertEquals("Accepted", obsB.getRepairOrderDTO().getState(),
+                "The updated values should get forwarded to the observer");
     }
 
     @Test
@@ -99,15 +102,18 @@ public class ControllerTest {
         this.contr.addRepairOrderObserver(obs);
 
         contr.addDiagnosticResult(savedOrderId, "broken");
-        assertEquals("broken", obs.getRepairOrderDTO().getDiagnosticResults().getFirst());
+        assertEquals("broken", obs.getRepairOrderDTO().getDiagnosticResults().getFirst(),
+                "Diagnostic result update should get forwarded to observer");
 
         contr.addRepairTask(savedOrderId, "fix", 200.0);
-        assertEquals("fix", obs.getRepairOrderDTO().getRepairTasks().getFirst().getDescription());
+        assertEquals("fix", obs.getRepairOrderDTO().getRepairTasks().getFirst().getDescription(),
+                "Repair task update should get forwarded to observer");
 
         contr.acceptRepairOrder(savedOrderId, new NoDiscount());
-        assertEquals("Accepted", obs.getRepairOrderDTO().getState());
+        assertEquals("Accepted", obs.getRepairOrderDTO().getState(),
+                "Accept update should get forwarded to the observer");
 
-        assertEquals(3, obs.getCallCount());
+        assertEquals(3, obs.getCallCount(), "Observer should fire once per state changing call, total of three");
     }
 
     @Test
