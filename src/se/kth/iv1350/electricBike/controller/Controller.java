@@ -19,15 +19,17 @@ public class Controller {
     private List<RepairOrderObserver> repairOrderObservers = new ArrayList<>();
 
     /**
-     * Creates a new instance.
-     * * @param customerReg The customer registry.
-     * 
-     * @param repairOrderReg The repair order registry.
-     * @param printer        The printer.
+     * Creates a new instance. The repair order registry is obtained
+     * through the singleton accessor
+     * {@link RepairOrderRegistry#getInstance()}, since only one repair
+     * order registry is allowed to exist.
+     *
+     * @param customerReg The customer registry.
+     * @param printer     The printer.
      */
-    public Controller(CustomerRegistry customerReg, RepairOrderRegistry repairOrderReg, Printer printer) {
+    public Controller(CustomerRegistry customerReg, Printer printer) {
         this.customerReg = customerReg;
-        this.repairOrderReg = repairOrderReg;
+        this.repairOrderReg = RepairOrderRegistry.getInstance();
         this.printer = printer;
     }
 
