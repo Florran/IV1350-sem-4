@@ -41,4 +41,14 @@ public class FileLogger {
     public void log(String entry) {
         out.println(entry);
     }
+
+    /**
+     * Closes the underlying file handle. After this method returns the
+     * logger may no longer be used. Mainly needed so tests on Windows
+     * can delete the log file, since Windows does not permit deletion
+     * of files that are still open for writing.
+     */
+    public void close() {
+        out.close();
+    }
 }

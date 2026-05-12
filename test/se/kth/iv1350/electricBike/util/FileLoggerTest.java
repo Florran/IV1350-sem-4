@@ -16,17 +16,22 @@ import static org.junit.jupiter.api.Assertions.*;
 public class FileLoggerTest {
 
     private final Path testFile = Paths.get("test-filelogger.txt");
+    private FileLogger loggerUnderTest;
 
     @AfterEach
     public void tearDown() throws IOException {
+        if (loggerUnderTest != null) {
+            loggerUnderTest.close();
+            loggerUnderTest = null;
+        }
         Files.deleteIfExists(testFile);
     }
 
     @Test
     public void testLogWritesEntryToFile() throws IOException {
-        FileLogger logger = new FileLogger(testFile.toString());
+        loggerUnderTest = new FileLogger(testFile.toString());
 
-        logger.log("hello world");
+        loggerUnderTest.log("hello world");
 
         assertTrue(Files.exists(testFile));
         String content = Files.readString(testFile);
@@ -36,10 +41,10 @@ public class FileLoggerTest {
 
     @Test
     public void testLogWritesEachEntryOnSeparateLine() throws IOException {
-        FileLogger logger = new FileLogger(testFile.toString());
+        loggerUnderTest = new FileLogger(testFile.toString());
 
-        logger.log("first entry");
-        logger.log("second entry");
+        loggerUnderTest.log("first entry");
+        loggerUnderTest.log("second entry");
 
         List<String> lines = Files.readAllLines(testFile);
         assertEquals(2, lines.size(), "Expected exactly two lines in the log");
@@ -51,8 +56,8 @@ public class FileLoggerTest {
     public void testCreatingLoggerOverwritesExistingFile() throws IOException {
         Files.writeString(testFile, "previous content\n");
 
-        FileLogger logger = new FileLogger(testFile.toString());
-        logger.log("fresh entry");
+        loggerUnderTest = new FileLogger(testFile.toString());
+        loggerUnderTest.log("fresh entry");
 
         List<String> lines = Files.readAllLines(testFile);
         assertEquals(1, lines.size(), "Existing file should be overwritten");
