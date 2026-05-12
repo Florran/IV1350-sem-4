@@ -21,12 +21,7 @@ public class RepairOrderLogger implements RepairOrderObserver {
      * @throws IOException if the log file cannot be opened.
      */
     public RepairOrderLogger() throws IOException {
-        try {
-            this.logStream = new PrintWriter(new FileWriter(LOG_FILE_NAME), true);
-        } catch(IOException ioe) {
-            System.out.println("CAN NOT LOG");
-            ioe.printStackTrace();
-        }
+        this.logStream = new PrintWriter(new FileWriter(LOG_FILE_NAME), true);
     }
 
     /**

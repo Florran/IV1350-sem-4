@@ -1,5 +1,6 @@
 package se.kth.iv1350.electricBike.startup;
 
+import java.io.IOException;
 import se.kth.iv1350.electricBike.controller.Controller;
 import se.kth.iv1350.electricBike.integration.CustomerRegistry;
 import se.kth.iv1350.electricBike.integration.Printer;
@@ -20,8 +21,12 @@ public class Main {
         Printer printer = new Printer();
 
         Controller contr = new Controller(customerRegistry, repairOrderRegistry, printer);
-        View view = new View(contr);
-
-        view.fakeExecution();
+        try {
+            View view = new View(contr);
+            view.fakeExecution();
+        } catch (IOException ioe) {
+            System.out.println("Could not start application, log file is unavailable.");
+            ioe.printStackTrace();
+        }
     }
 }
