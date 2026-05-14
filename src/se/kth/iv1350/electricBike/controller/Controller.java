@@ -1,9 +1,11 @@
 package se.kth.iv1350.electricBike.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import se.kth.iv1350.electricBike.integration.*;
 import se.kth.iv1350.electricBike.model.RepairOrder;
+import se.kth.iv1350.electricBike.model.RepairOrderObserver;
 import se.kth.iv1350.electricBike.model.discount.DiscountStrategy;
 
 /**
@@ -14,17 +16,36 @@ public class Controller {
     private RepairOrderRegistry repairOrderReg;
     private Printer printer;
 
+    private List<RepairOrderObserver> repairOrderObservers = new ArrayList<>();
+
     /**
-     * Creates a new instance.
-     * * @param customerReg The customer registry.
-     * 
-     * @param repairOrderReg The repair order registry.
-     * @param printer        The printer.
+     * Creates a new instance. The repair order registry is obtained
+     * through the singleton accessor
+     * {@link RepairOrderRegistry#getInstance()}, since only one repair
+     * order registry is allowed to exist.
+     *
+     * @param customerReg The customer registry.
+     * @param printer     The printer.
      */
-    public Controller(CustomerRegistry customerReg, RepairOrderRegistry repairOrderReg, Printer printer) {
+    public Controller(CustomerRegistry customerReg, Printer printer) {
         this.customerReg = customerReg;
-        this.repairOrderReg = repairOrderReg;
+        this.repairOrderReg = RepairOrderRegistry.getInstance();
         this.printer = printer;
+    }
+
+    /**
+     * Adds an observer that will be notified when any repair order is updated.
+     *
+     * @param obs The observer to add.
+     */
+    public void addRepairOrderObserver(RepairOrderObserver obs) {
+        this.repairOrderObservers.add(obs);
+    }
+
+    private void attachObservers(RepairOrder repairOrder) {
+        for (RepairOrderObserver obs : this.repairOrderObservers) {
+            repairOrder.addObserver(obs);
+        }
     }
 
     /**
@@ -88,6 +109,7 @@ public class Controller {
     public void addDiagnosticResult(String repairOrderId, String diagTaskResult) {
         RepairOrderDTO dto = repairOrderReg.findRepairOrderById(repairOrderId);
         RepairOrder repairOrder = new RepairOrder(dto);
+        attachObservers(repairOrder);
         repairOrder.addDiagnosticResult(diagTaskResult);
         repairOrderReg.updateRepairOrder(repairOrder.createDTO());
     }
@@ -102,6 +124,7 @@ public class Controller {
     public void addRepairTask(String repairOrderId, String repairTaskDesc, double cost) {
         RepairOrderDTO dto = repairOrderReg.findRepairOrderById(repairOrderId);
         RepairOrder repairOrder = new RepairOrder(dto);
+        attachObservers(repairOrder);
         repairOrder.addRepairTask(repairTaskDesc, cost);
         repairOrderReg.updateRepairOrder(repairOrder.createDTO());
     }
@@ -119,13 +142,16 @@ public class Controller {
     }
 
     /**
-     * Accepts the order and prints the receipt.
+     * Accepts the order, applies the final discount, and prints the receipt.
      * * @param repairOrderId The order ID.
+     * 
+     * @param discountStrategy The strategy to apply to the final order.
      */
-    public void acceptRepairOrder(String repairOrderId) {
+    public void acceptRepairOrder(String repairOrderId, DiscountStrategy discountStrategy) {
         RepairOrderDTO dto = repairOrderReg.findRepairOrderById(repairOrderId);
         RepairOrder repairOrder = new RepairOrder(dto);
-        repairOrder.acceptRepairOrder();
+        attachObservers(repairOrder);
+        repairOrder.acceptRepairOrder(discountStrategy);
         RepairOrderDTO repairOrderToPrint = repairOrder.createDTO();
         repairOrderReg.updateRepairOrder(repairOrderToPrint);
         printer.printRepairOrder(repairOrderToPrint);

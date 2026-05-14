@@ -3,6 +3,7 @@ package se.kth.iv1350.electricBike.model;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import se.kth.iv1350.electricBike.integration.RepairOrderDTO;
+import se.kth.iv1350.electricBike.model.discount.NoDiscount;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -44,7 +45,7 @@ public class RepairOrderTest {
 
     @Test
     void testAcceptRepairOrderChangesState() {
-        repairOrder.acceptRepairOrder();
+        repairOrder.acceptRepairOrder(new NoDiscount());
         assertEquals("Accepted", repairOrder.getState());
     }
 

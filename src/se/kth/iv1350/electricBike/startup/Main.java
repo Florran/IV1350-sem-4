@@ -1,9 +1,9 @@
 package se.kth.iv1350.electricBike.startup;
 
+import java.io.IOException;
 import se.kth.iv1350.electricBike.controller.Controller;
 import se.kth.iv1350.electricBike.integration.CustomerRegistry;
 import se.kth.iv1350.electricBike.integration.Printer;
-import se.kth.iv1350.electricBike.integration.RepairOrderRegistry;
 import se.kth.iv1350.electricBike.view.View;
 
 /**
@@ -12,16 +12,22 @@ import se.kth.iv1350.electricBike.view.View;
 public class Main {
     /**
      * Creates the application objects and starts the fake execution.
+     * The repair order registry is not instantiated here, since it is
+     * a singleton owned by the integration layer.
+     *
      * @param args Command line arguments, not used.
      */
     public static void main(String[] args) {
         CustomerRegistry customerRegistry = new CustomerRegistry();
-        RepairOrderRegistry repairOrderRegistry = new RepairOrderRegistry();
         Printer printer = new Printer();
 
-        Controller contr = new Controller(customerRegistry, repairOrderRegistry, printer);
-        View view = new View(contr);
-
-        view.fakeExecution();
+        Controller contr = new Controller(customerRegistry, printer);
+        try {
+            View view = new View(contr);
+            view.fakeExecution();
+        } catch (IOException ioe) {
+            System.out.println("Could not start application, log file is unavailable.");
+            ioe.printStackTrace();
+        }
     }
 }

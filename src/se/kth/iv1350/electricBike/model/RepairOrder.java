@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.UUID;
 import se.kth.iv1350.electricBike.integration.RepairOrderDTO;
 import se.kth.iv1350.electricBike.integration.RepairTaskDTO;
+import se.kth.iv1350.electricBike.model.discount.DiscountStrategy;
 
 /**
  * Represents a repair order for a bike, containing customer details,
@@ -21,6 +22,7 @@ public class RepairOrder {
     private LocalDateTime date;
     private LocalDateTime estimatedCompletionDate;
     private String state;
+    private double appliedDiscount;
     private DiagnosticReport diagnosticReport;
     private List<RepairTask> repairTasks;
 
@@ -39,6 +41,7 @@ public class RepairOrder {
         this.date = LocalDateTime.now();
         this.estimatedCompletionDate = this.date.plusWeeks(1);
         this.state = "Newly created";
+        this.appliedDiscount = 0.0;
         this.diagnosticReport = new DiagnosticReport();
         this.repairTasks = new ArrayList<>();
     }
@@ -56,6 +59,7 @@ public class RepairOrder {
         this.date = LocalDateTime.parse(dto.getDate());
         this.estimatedCompletionDate = LocalDateTime.parse(dto.getEstimatedCompletionDate());
         this.state = dto.getState();
+        this.appliedDiscount = dto.getAppliedDiscount();
         this.diagnosticReport = new DiagnosticReport(dto.getDiagnosticResults());
         this.repairTasks = new ArrayList<>();
         for (RepairTaskDTO taskDto : dto.getRepairTasks()) {
@@ -65,7 +69,8 @@ public class RepairOrder {
 
     /**
      * Adds an observer to be notified when the repair order is updated.
-     * * @param obs The observer to add.
+     *
+     * @param obs The observer to add.
      */
     public void addObserver(RepairOrderObserver obs) {
         observers.add(obs);
@@ -178,6 +183,7 @@ public class RepairOrder {
                 date.toString(),
                 estimatedCompletionDate.toString(),
                 getTotalCost(),
+                appliedDiscount,
                 diagnosticReport.getResults(),
                 taskDTOs);
     }
@@ -204,11 +210,14 @@ public class RepairOrder {
     }
 
     /**
-     * Updates the state of this repair order to indicate that the customer has
-     * accepted the proposed repairs.
+     * Updates the state of this repair order and locks in the applied discount.
+     *
+     * @param discountStrategy The strategy used to calculate the final discount.
      */
-    public void acceptRepairOrder() {
+    public void acceptRepairOrder(DiscountStrategy discountStrategy) {
         this.state = "Accepted";
+        double baseCost = getTotalCost();
+        this.appliedDiscount = baseCost - discountStrategy.applyDiscount(baseCost);
         notifyObservers();
     }
 
