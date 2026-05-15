@@ -164,6 +164,16 @@ public class ControllerTest {
     }
 
     @Test
+    public void testFindByDbFailureTriggerIdThrowsDatabaseFailureException() {
+        try {
+            this.contr.findRepairOrderById(RepairOrderRegistry.DB_FAILURE_TRIGGER_ID);
+            fail("Expected DatabaseFailureException");
+        } catch (DatabaseFailureException exc) {
+            assertEquals(RepairOrderRegistry.DB_FAILURE_TRIGGER_ID, exc.getItemId());
+        }
+    }
+
+    @Test
     void testAddDiagnosticResultViaController() {
         String savedOrderId = createOrderAndGetId();
 

@@ -1,0 +1,11 @@
+2026-05-15 15:25:48 - DatabaseFailureException: Database call failed while looking up item with id trigger-db-failure.
+se.kth.iv1350.electricBike.integration.DatabaseFailureException: Database call failed while looking up item with id trigger-db-failure.
+	at se.kth.iv1350.electricBike.integration.RepairOrderRegistry.findRepairOrderById(RepairOrderRegistry.java:80)
+	at se.kth.iv1350.electricBike.controller.Controller.findRepairOrderById(Controller.java:90)
+	at se.kth.iv1350.electricBike.view.View.fakeExecution(View.java:89)
+	at se.kth.iv1350.electricBike.startup.Main.main(Main.java:27)
+	at org.codehaus.mojo.exec.ExecJavaMojo.doMain(ExecJavaMojo.java:385)
+	at org.codehaus.mojo.exec.ExecJavaMojo.doExec(ExecJavaMojo.java:374)
+	at org.codehaus.mojo.exec.ExecJavaMojo.lambda$execute$0(ExecJavaMojo.java:296)
+	at java.base/java.lang.Thread.run(Thread.java:1583)
+

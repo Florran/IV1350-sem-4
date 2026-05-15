@@ -4,9 +4,11 @@ import java.io.IOException;
 import se.kth.iv1350.electricBike.controller.Controller;
 import se.kth.iv1350.electricBike.integration.CustomerDTO;
 import se.kth.iv1350.electricBike.integration.CustomerNotFoundException;
-import se.kth.iv1350.electricBike.integration.RepairOrderDTO;
+import se.kth.iv1350.electricBike.integration.DatabaseFailureException;
+import se.kth.iv1350.electricBike.integration.RepairOrderRegistry;
 import se.kth.iv1350.electricBike.model.discount.DiscountStrategy;
 import se.kth.iv1350.electricBike.model.discount.LoyaltyDiscount;
+import se.kth.iv1350.electricBike.util.LogHandler;
 
 /**
  * Represents the view layer used to run the application flow.
@@ -14,6 +16,8 @@ import se.kth.iv1350.electricBike.model.discount.LoyaltyDiscount;
 public class View {
 
     private Controller contr;
+    private ErrorMessageHandler errorMsgHandler;
+    private LogHandler logger;
 
     /**
      * The view constructor.
@@ -22,6 +26,8 @@ public class View {
      */
     public View(Controller contr) throws IOException {
         this.contr = contr;
+        this.errorMsgHandler = new ErrorMessageHandler();
+        this.logger = new LogHandler();
         contr.addRepairOrderObserver(new RepairOrderView());
         contr.addRepairOrderObserver(new RepairOrderLogger());
     }
@@ -42,8 +48,8 @@ public class View {
         try {
             foundCustomer = contr.findCustomer(customerPhone);
         } catch (CustomerNotFoundException exc) {
-            System.out.println("Ingen kund hittades med telefonnummer " + exc.getNumber()
-                    + ". Kontrollera numret och försök igen!");
+            errorMsgHandler.showErrorMsg("Ingen kund hittades med telefonnummer "
+                    + exc.getNumber() + ". Kontrollera numret och försök igen!");
             return;
         }
 
@@ -78,12 +84,12 @@ public class View {
         System.out.println("\n--- Skrivare skriver ut kvitto ---");
         contr.acceptRepairOrder(orderId, loyaltyDiscount);
 
-        System.out.println("\n--- Demonstration av felhantering (sökning på okänt ID) ---");
-        String fakeId = "finns-inte-id";
-        RepairOrderDTO missingOrder = contr.findRepairOrderById(fakeId);
-        if (missingOrder == null) {
-            System.out.println("[ANVÄNDARMEDDELANDE]: Operationen misslyckades då ordern med ID " + fakeId
-                    + " inte kunde hittas.");
+        System.out.println("\n--- Demonstration av felhantering (simulerat databasfel) ---");
+        try {
+            contr.findRepairOrderById(RepairOrderRegistry.DB_FAILURE_TRIGGER_ID);
+        } catch (DatabaseFailureException exc) {
+            errorMsgHandler.showErrorMsg("Operationen kunde inte slutföras. Försök igen senare.");
+            logger.logException(exc);
         }
     }
 }

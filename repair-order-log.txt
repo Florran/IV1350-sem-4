@@ -1,7 +1,7 @@
 ---------------------------------------
-REPAIR ORDER: 0cf38
-Date: 2026-05-12 10:12
-Estimated completion: 2026-05-19 10:12
+REPAIR ORDER: 60c35
+Date: 2026-05-15 15:25
+Estimated completion: 2026-05-22 15:25
 Status: Newly created
 Customer Phone: 0705556767
 Bike Serial: 0001
@@ -17,9 +17,9 @@ Total to pay: 0.0 kr
 ---------------------------------------
 
 ---------------------------------------
-REPAIR ORDER: 0cf38
-Date: 2026-05-12 10:12
-Estimated completion: 2026-05-19 10:12
+REPAIR ORDER: 60c35
+Date: 2026-05-15 15:25
+Estimated completion: 2026-05-22 15:25
 Status: Newly created
 Customer Phone: 0705556767
 Bike Serial: 0001
@@ -36,9 +36,9 @@ Total to pay: 0.0 kr
 ---------------------------------------
 
 ---------------------------------------
-REPAIR ORDER: 0cf38
-Date: 2026-05-12 10:12
-Estimated completion: 2026-05-19 10:12
+REPAIR ORDER: 60c35
+Date: 2026-05-15 15:25
+Estimated completion: 2026-05-22 15:25
 Status: Newly created
 Customer Phone: 0705556767
 Bike Serial: 0001
@@ -56,9 +56,9 @@ Total to pay: 450.0 kr
 ---------------------------------------
 
 ---------------------------------------
-REPAIR ORDER: 0cf38
-Date: 2026-05-12 10:12
-Estimated completion: 2026-05-19 10:12
+REPAIR ORDER: 60c35
+Date: 2026-05-15 15:25
+Estimated completion: 2026-05-22 15:25
 Status: Newly created
 Customer Phone: 0705556767
 Bike Serial: 0001
@@ -77,9 +77,9 @@ Total to pay: 650.0 kr
 ---------------------------------------
 
 ---------------------------------------
-REPAIR ORDER: 0cf38
-Date: 2026-05-12 10:12
-Estimated completion: 2026-05-19 10:12
+REPAIR ORDER: 60c35
+Date: 2026-05-15 15:25
+Estimated completion: 2026-05-22 15:25
 Status: Accepted
 Customer Phone: 0705556767
 Bike Serial: 0001
